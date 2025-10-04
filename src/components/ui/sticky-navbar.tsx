@@ -63,8 +63,14 @@ export const StickyNav = ({
                 "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200"
               )}
             >
-              <span className="block sm:hidden">{navItem.icon}</span>
-              <span className="hidden sm:block text-sm">{navItem.name}</span>
+              {navItem.name ? (
+                <>
+                  <span className="block sm:hidden">{navItem.icon}</span>
+                  <span className="hidden sm:block text-sm">{navItem.name}</span>
+                </>
+              ) : (
+                <span className="block">{navItem.icon}</span>
+              )}
             </Link>
           ))}
         </motion.div>

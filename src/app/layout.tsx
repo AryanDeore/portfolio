@@ -5,6 +5,7 @@ import { StickyNav } from "@/components/ui/sticky-navbar";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Home as HomeIcon, User, MessageSquare, Briefcase } from "lucide-react";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,9 +43,9 @@ const navItems = [
     icon: <HomeIcon className="h-4 w-4 text-muted-foreground" />,
   },
   {
-    name: "LOGO",
+    name: "",
     link: "#",
-    icon: <User className="h-4 w-4 text-muted-foreground" />,
+    icon: <Image src="/website-icon.svg" alt="Logo" width={50} height={50} className="h-7 w-7" />,
   },
   {
     name: "Projects",
