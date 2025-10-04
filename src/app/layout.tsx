@@ -31,24 +31,19 @@ export const metadata: Metadata = {
 
 const navItems = [
   {
-    name: "Home",
+    name: "Ask AI",
     link: "#",
     icon: <HomeIcon className="h-4 w-4 text-muted-foreground" />,
   },
   {
-    name: "About",
-    link: "#about",
+    name: "LOGO",
+    link: "#",
     icon: <User className="h-4 w-4 text-muted-foreground" />,
   },
   {
     name: "Projects",
     link: "#projects",
     icon: <Briefcase className="h-4 w-4 text-muted-foreground" />,
-  },
-  {
-    name: "Contact",
-    link: "#contact",
-    icon: <MessageSquare className="h-4 w-4 text-muted-foreground" />,
   },
 ];
 
