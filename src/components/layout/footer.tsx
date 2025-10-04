@@ -1,6 +1,7 @@
 "use client";
 
 import { Mail, Github, Linkedin, Twitter, ExternalLink } from "lucide-react";
+import { MaxWidthWrapper } from "@/components/layout/max-width-wrapper";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -41,7 +42,7 @@ export function Footer() {
 
   return (
     <footer className="bg-card border-t">
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <MaxWidthWrapper maxWidth="6xl" className="py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
@@ -111,7 +112,7 @@ export function Footer() {
             </a>
           </div>
         </div>
-      </div>
+      </MaxWidthWrapper>
     </footer>
   );
 }

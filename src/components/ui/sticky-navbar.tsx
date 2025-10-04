@@ -49,7 +49,9 @@ export const StickyNav = ({
             duration: 0.2,
           }}
           className={cn(
-            "flex max-w-fit fixed top-10 inset-x-0 mx-auto bg-background/95 backdrop-blur-sm border border-border rounded-full shadow-lg z-[5000] px-8 py-4 items-center justify-center space-x-6",
+            "flex fixed top-8 inset-x-0 mx-auto bg-background/95 backdrop-blur-sm border border-border rounded-full shadow-lg z-[5000] px-8 py-4 items-center justify-center space-x-6",
+            // Ensure navbar doesn't stretch too wide on ultra-wide screens - use max-w-fit for content-based width with a reasonable maximum
+            "max-w-fit",
             className
           )}
         >
@@ -68,7 +70,7 @@ export const StickyNav = ({
         </motion.div>
       </AnimatePresence>
 
-      {/* Theme Toggle - Fixed to the right */}
+      {/* Theme Toggle - Inside max-width container, aligned right */}
       <AnimatePresence mode="wait">
         <motion.div
           initial={{
@@ -82,14 +84,18 @@ export const StickyNav = ({
           transition={{
             duration: 0.2,
           }}
-          className="fixed top-10 right-6 z-[5000]"
+          className="fixed top-10 left-0 right-0 z-[5000] pointer-events-none"
         >
-          <ThemeToggleButton
-            theme={theme}
-            onClick={toggleTheme}
-            variant="none"
-            className="bg-background/95 backdrop-blur-sm border border-border shadow-lg"
-          />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end bg-red-500/30 border-2 border-red-500">
+            <div className="pointer-events-auto">
+              <ThemeToggleButton
+                theme={theme}
+                onClick={toggleTheme}
+                variant="none"
+                className="bg-background/95 backdrop-blur-sm border border-border shadow-lg"
+              />
+            </div>
+          </div>
         </motion.div>
       </AnimatePresence>
     </>

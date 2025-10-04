@@ -1,6 +1,8 @@
+import { MaxWidthWrapper } from "@/components/layout/max-width-wrapper";
+
 export default function Home() {
   return (
-    <div className="container mx-auto px-4 pt-28 pb-20">
+    <MaxWidthWrapper maxWidth="6xl" className="pt-28 pb-20">
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           Welcome to Alex Johnson&apos;s Portfolio
@@ -13,6 +15,6 @@ export default function Home() {
 
         </div>
       </div>
-    </div>
+    </MaxWidthWrapper>
   );
 }
