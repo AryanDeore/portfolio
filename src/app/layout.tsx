@@ -45,7 +45,7 @@ const navItems = [
   {
     name: "",
     link: "#",
-    icon: <Image src="/website-icon.svg" alt="Logo" width={50} height={50} className="h-7 w-7" />,
+    icon: <Image src="/website-icon.svg" alt="Logo" width={10} height={10} className="h-15 w-15" />,
   },
   {
     name: "Projects",
