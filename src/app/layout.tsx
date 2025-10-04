@@ -18,14 +18,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alex Johnson - Full Stack Developer",
-  description: "Portfolio showcasing full-stack development expertise.",
-  keywords: ["Full Stack Developer", "React", "Next.js", "TypeScript", "Portfolio"],
-  authors: [{ name: "Alex Johnson" }],
-  creator: "Alex Johnson",
+  title: "Aryan AI Dev",
+  description: "Portfolio showcasing AI development expertise.",
+  keywords: ["AI Developer", "Python", "LLM", "Langchain"],
+  authors: [{ name: "Aryan" }],
+  creator: "Aryan",
   openGraph: {
-    title: "Alex Johnson - Full Stack Developer",
-    description: "Portfolio showcasing full-stack development expertise",
+    title: "Aryan - AI Developer",
+    description: "Portfolio showcasing AI development expertise",
     type: "website",
     images: ["/favicon.svg"],
   },
