@@ -22,10 +22,16 @@ export const metadata: Metadata = {
   keywords: ["Full Stack Developer", "React", "Next.js", "TypeScript", "Portfolio"],
   authors: [{ name: "Alex Johnson" }],
   creator: "Alex Johnson",
+  icons: {
+    icon: "/website-icon.svg",
+    shortcut: "/website-icon.svg",
+    apple: "/website-icon.svg",
+  },
   openGraph: {
     title: "Alex Johnson - Full Stack Developer",
     description: "Portfolio showcasing full-stack development expertise",
     type: "website",
+    images: ["/website-icon.svg"],
   },
 };
 
