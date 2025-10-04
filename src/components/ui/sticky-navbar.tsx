@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { MessageSquare, RotateCcw } from "lucide-react";
 
-export const FloatingNav = ({
+export const StickyNav = ({
   navItems,
   className,
   isInChatMode = false,

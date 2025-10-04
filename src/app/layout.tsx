@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { FloatingNav } from "@/components/ui/floating-navbar";
+import { StickyNav } from "@/components/ui/sticky-navbar";
 import { Footer } from "@/components/layout/footer";
 import { Home as HomeIcon, User, MessageSquare, Briefcase } from "lucide-react";
 
@@ -61,7 +61,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <FloatingNav navItems={navItems} />
+        <StickyNav navItems={navItems} />
         <main className="min-h-screen">
           {children}
         </main>
