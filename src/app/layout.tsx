@@ -23,16 +23,11 @@ export const metadata: Metadata = {
   keywords: ["Full Stack Developer", "React", "Next.js", "TypeScript", "Portfolio"],
   authors: [{ name: "Alex Johnson" }],
   creator: "Alex Johnson",
-  icons: {
-    icon: "/website-icon.svg",
-    shortcut: "/website-icon.svg",
-    apple: "/website-icon.svg",
-  },
   openGraph: {
     title: "Alex Johnson - Full Stack Developer",
     description: "Portfolio showcasing full-stack development expertise",
     type: "website",
-    images: ["/website-icon.svg"],
+    images: ["/favicon.svg"],
   },
 };
 
@@ -61,6 +56,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
