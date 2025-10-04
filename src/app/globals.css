@@ -209,6 +209,19 @@
   .glass-effect {
     @apply bg-background/80 backdrop-blur-md border border-border/50;
   }
+
+  /* Ultra-wide screen utilities */
+  .ultra-wide-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .content-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .narrow-container {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 }
 
 @keyframes fadeIn {
