@@ -49,7 +49,7 @@ export const StickyNav = ({
             duration: 0.2,
           }}
           className={cn(
-            "flex fixed top-7.5 inset-x-0 mx-auto bg-background/95 backdrop-blur-sm border-2 border-green-500 rounded-full shadow-lg z-[5000] px-8 py-0 items-center justify-center space-x-6",
+            "flex fixed top-8 inset-x-0 mx-auto bg-background/95 backdrop-blur-sm rounded-full shadow-lg z-[5000] px-8 py-0 items-center justify-center space-x-6",
             // Ensure navbar doesn't stretch too wide on ultra-wide screens - use max-w-fit for content-based width with a reasonable maximum
             "max-w-fit",
             className
@@ -60,7 +60,7 @@ export const StickyNav = ({
               key={`link=${idx}`}
               href={navItem.link}
               className={cn(
-                "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 border-2 border-green-500 rounded-md px-2 py-0"
+                "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 rounded-md px-2 py-0"
               )}
             >
               {navItem.name ? (
@@ -91,11 +91,11 @@ export const StickyNav = ({
           }}
           className="fixed top-10 left-0 right-0 z-[5000] pointer-events-none"
         >
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end border-2 border-green-500 rounded-md">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end rounded-md">
             <div className="pointer-events-auto">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-md hover:bg-background/20 transition-colors duration-200 text-muted-foreground hover:text-foreground border-2 border-green-500"
+                className="p-2 rounded-md hover:bg-background/20 transition-colors duration-200 text-muted-foreground hover:text-foreground"
                 aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
               >
                 {theme === 'light' ? (

@@ -26,8 +26,6 @@ export function MaxWidthWrapper({
     <div className={cn(
       "mx-auto w-full px-4 sm:px-6 lg:px-8",
       maxWidthClasses[maxWidth],
-      // Temporary red background for testing max-width visibility
-      "bg-red-500/20 border-2 border-red-500",
       className
     )}>
       {children}
