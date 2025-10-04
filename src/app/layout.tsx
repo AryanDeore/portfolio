@@ -32,22 +32,22 @@ const navItems = [
   {
     name: "Home",
     link: "#",
-    icon: <HomeIcon className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    icon: <HomeIcon className="h-4 w-4 text-muted-foreground" />,
   },
   {
     name: "About",
     link: "#about",
-    icon: <User className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    icon: <User className="h-4 w-4 text-muted-foreground" />,
   },
   {
     name: "Projects",
     link: "#projects",
-    icon: <Briefcase className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    icon: <Briefcase className="h-4 w-4 text-muted-foreground" />,
   },
   {
     name: "Contact",
     link: "#contact",
-    icon: <MessageSquare className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    icon: <MessageSquare className="h-4 w-4 text-muted-foreground" />,
   },
 ];
 
