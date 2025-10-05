@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   motion,
   AnimatePresence,
@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useTheme } from "@/components/theme-provider";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Menu, X } from "lucide-react";
 
 export const StickyNav = ({
   navItems,
@@ -26,14 +26,72 @@ export const StickyNav = ({
   const { theme, toggleTheme } = useTheme();
 
   const [visible, setVisible] = useState(true); // Always start visible
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useMotionValueEvent(scrollYProgress, "change", (current) => {
     // Always keep navbar visible - sticky to top behavior
     setVisible(true);
   });
 
+  // Close mobile menu when clicking outside or pressing escape
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isMobileMenuOpen && !target.closest('[data-mobile-menu]')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <>
+      {/* Hamburger Menu Button - Fixed to top left */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{
+            opacity: 1,
+            y: -100,
+          }}
+          animate={{
+            y: visible ? 0 : -100,
+            opacity: visible ? 1 : 0,
+          }}
+          transition={{
+            duration: 0.2,
+          }}
+          className="fixed top-8 left-8 z-[5001] sm:hidden"
+        >
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-3 bg-background/95 backdrop-blur-sm rounded-full shadow-lg text-muted-foreground hover:text-foreground transition-colors duration-200"
+            aria-label="Toggle mobile menu"
+            data-mobile-menu
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </button>
+        </motion.div>
+      </AnimatePresence>
+
       {/* Main Navigation */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -60,7 +118,10 @@ export const StickyNav = ({
               key={`link=${idx}`}
               href={navItem.link}
               className={cn(
-                "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 rounded-md px-2 py-0"
+                "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 rounded-md",
+                // Responsive padding
+                "px-1 py-0", // Mobile: compact padding
+                "sm:px-2 sm:py-0" // Desktop: normal padding
               )}
             >
               {navItem.name ? (
@@ -73,6 +134,38 @@ export const StickyNav = ({
             </Link>
           ))}
         </motion.div>
+      </AnimatePresence>
+
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-20 left-4 w-64 bg-background/95 backdrop-blur-sm rounded-2xl shadow-lg z-[4999] sm:hidden"
+            data-mobile-menu
+          >
+            <div className="p-4 space-y-2">
+              {navItems
+                .filter(item => item.name) // Only show named items in mobile menu
+                .map((navItem, idx) => (
+                  <Link
+                    key={`mobile-link=${idx}`}
+                    href={navItem.link}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors duration-200"
+                  >
+                    <div className="flex items-center space-x-3">
+                      {navItem.icon && <span>{navItem.icon}</span>}
+                      <span className="text-lg">{navItem.name}</span>
+                    </div>
+                  </Link>
+                ))}
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Theme Toggle - Inside max-width container, aligned right */}
