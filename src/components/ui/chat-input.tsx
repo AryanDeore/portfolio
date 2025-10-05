@@ -69,7 +69,7 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
             <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none text-base text-muted-foreground/60 flex items-center">
               <span>{typingAnimation.text}</span>
               <span 
-                className={`ml-0.5 w-2 h-5 bg-muted-foreground/60 transition-opacity duration-100 ${
+                className={`ml-0.5 w-0.5 h-5 bg-muted-foreground/60 transition-opacity duration-100 ${
                   typingAnimation.showCursor ? 'opacity-100' : 'opacity-0'
                 }`}
               />
