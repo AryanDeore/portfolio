@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { ChatInput } from "@/components/ui/chat-input";
@@ -8,12 +8,27 @@ import { MaxWidthWrapper } from "@/components/layout/max-width-wrapper";
 
 export function HeroSection() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const [showStickyInput, setShowStickyInput] = useState(false);
+  const heroInputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
+      
       // Hide scroll indicator after scrolling 50px
       setShowScrollIndicator(scrollY < 50);
+      
+      // Calculate when hero input completely exits behind navbar
+      if (heroInputRef.current) {
+        const heroInputRect = heroInputRef.current.getBoundingClientRect();
+        const navbarTop = 32; // top-8 = 32px from top
+        
+        // Show sticky input when bottom of hero input crosses top of navbar
+        // This means the hero input has completely exited the visible area
+        const heroInputBottom = heroInputRect.bottom;
+        
+        setShowStickyInput(heroInputBottom <= navbarTop);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -59,7 +74,7 @@ export function HeroSection() {
           </div>
 
           {/* Chat Input */}
-          <div className="pt-8">
+          <div ref={heroInputRef} className="pt-8">
             <ChatInput onSubmit={handleChatSubmit} />
           </div>
         </div>
@@ -76,6 +91,15 @@ export function HeroSection() {
           <ChevronDown className="h-8 w-8 text-muted-foreground/60 animate-bounce hover:text-foreground transition-all duration-300 hover:drop-shadow-lg" />
         </button>
       )}
+
+      {/* Sticky Chat Input - Fixed at bottom when scrolled */}
+      <div className={`fixed bottom-4 left-4 right-4 z-30 transition-all duration-300 ease-in-out transform ${
+        showStickyInput ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
+      }`}>
+        <MaxWidthWrapper maxWidth="2xl">
+          <ChatInput onSubmit={handleChatSubmit} placeholder="Ask me anything..." hidePills={true} />
+        </MaxWidthWrapper>
+      </div>
     </section>
   );
 }

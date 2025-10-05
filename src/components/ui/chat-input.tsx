@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 interface ChatInputProps {
   onSubmit?: (message: string) => void;
   placeholder?: string;
+  hidePills?: boolean;
 }
 
 const suggestionChips = [
@@ -24,7 +25,7 @@ const typingQuestions = [
   "Have you created a RAG?",
 ];
 
-export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
+export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -151,36 +152,38 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
       </form>
 
       {/* Suggestion Pills */}
-      <div className="relative overflow-hidden w-full">
-        <div 
-          ref={marqueeRef}
-          className="flex whitespace-nowrap will-change-transform"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* First set of pills */}
-          {suggestionChips.map((chip, index) => (
-            <div key={`hero-pill-1-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
-              <HeroPill
-                text={chip}
-                className="hover:scale-105 transition-transform duration-200"
-              />
-            </div>
-          ))}
-          {/* Second identical set for seamless loop */}
-          {suggestionChips.map((chip, index) => (
-            <div key={`hero-pill-2-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
-              <HeroPill
-                text={chip}
-                className="hover:scale-105 transition-transform duration-200"
-              />
-            </div>
-          ))}
+      {!hidePills && (
+        <div className="relative overflow-hidden w-full">
+          <div 
+            ref={marqueeRef}
+            className="flex whitespace-nowrap will-change-transform"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            {/* First set of pills */}
+            {suggestionChips.map((chip, index) => (
+              <div key={`hero-pill-1-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
+                <HeroPill
+                  text={chip}
+                  className="hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+            ))}
+            {/* Second identical set for seamless loop */}
+            {suggestionChips.map((chip, index) => (
+              <div key={`hero-pill-2-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
+                <HeroPill
+                  text={chip}
+                  className="hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+            ))}
+          </div>
+          {/* Gradient fade-out effects */}
+          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10"></div>
+          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none z-10"></div>
         </div>
-        {/* Gradient fade-out effects */}
-        <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10"></div>
-        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none z-10"></div>
-      </div>
+      )}
     </div>
   );
 }
