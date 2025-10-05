@@ -31,6 +31,7 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const positionRef = useRef(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   const typingAnimation = useTypingAnimation({
     texts: typingQuestions,
@@ -76,11 +77,32 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
     };
   }, [isPaused]);
 
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // Reset height to auto to get the correct scrollHeight
+      textarea.style.height = 'auto';
+      // Set height to scrollHeight to fit content
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [message]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && onSubmit) {
       onSubmit(message.trim());
       setMessage("");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (message.trim() && onSubmit) {
+        onSubmit(message.trim());
+        setMessage("");
+      }
     }
   };
 
@@ -92,20 +114,23 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
     <div className="w-full max-w-2xl mx-auto space-y-4">
       {/* Chat Input */}
       <form onSubmit={handleSubmit} className="relative">
-        <div className="relative flex items-center">
-          <input
-            type="text"
+        <div className="relative flex items-start">
+          <textarea
+            ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder={displayPlaceholder}
-            className="w-full px-6 py-4 pr-14 text-base bg-background/80 backdrop-blur-sm border border-border/50 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200 placeholder:text-muted-foreground/60"
+            rows={1}
+            style={{ resize: 'none' }}
+            className="w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-border/70 dark:border-border rounded-3xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 dark:focus:border-primary/70 transition-all duration-200 placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-scroll"
           />
           
           {/* Animated typing text with cursor overlay */}
           {shouldShowTypingAnimation && (
-            <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none text-base text-muted-foreground/60 flex items-center">
+            <div className="absolute left-6 top-5 pointer-events-none text-base text-muted-foreground/60 flex items-center">
               <span>{typingAnimation.text}</span>
               <span 
                 className={`ml-0.5 w-0.5 h-5 bg-muted-foreground/60 transition-opacity duration-100 ${
@@ -114,15 +139,14 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
               />
             </div>
           )}
-          <Button
+          <button
             type="submit"
-            size="sm"
-            className="absolute right-2 h-10 w-10 rounded-full p-0 bg-primary hover:bg-primary/90 disabled:opacity-50"
+            className="absolute right-3 top-4 p-2 disabled:opacity-50 transition-opacity"
             disabled={!message.trim()}
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-5 w-5 text-primary hover:text-primary/80 transition-colors rotate-45" />
             <span className="sr-only">Send message</span>
-          </Button>
+          </button>
         </div>
       </form>
 
