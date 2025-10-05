@@ -76,6 +76,10 @@ export function HeroSection() {
     setIsChatModalOpen(false);
   };
 
+  const handleClearChat = () => {
+    setMessages([]);
+  };
+
   const scrollToNextSection = () => {
     const heroHeight = window.innerHeight;
     window.scrollTo({
@@ -143,6 +147,7 @@ export function HeroSection() {
         onClose={handleCloseChatModal}
         messages={messages}
         onSendMessage={handleChatSubmit}
+        onClearChat={handleClearChat}
       />
     </section>
   );

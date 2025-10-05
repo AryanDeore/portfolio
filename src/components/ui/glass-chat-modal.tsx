@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X, Send } from "lucide-react";
+import { X, Send, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 interface Message {
   id: string;
@@ -16,9 +17,10 @@ interface GlassChatModalProps {
   onClose: () => void;
   messages: Message[];
   onSendMessage: (message: string) => void;
+  onClearChat: () => void;
 }
 
-export function GlassChatModal({ isOpen, onClose, messages, onSendMessage }: GlassChatModalProps) {
+export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onClearChat }: GlassChatModalProps) {
   const [currentMessage, setCurrentMessage] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -121,18 +123,44 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage }: Gla
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border/30">
           <div>
-            <h2 className="text-xl font-semibold">Chat with Aryan</h2>
-            <p className="text-sm text-muted-foreground">Ask me about my experience and projects</p>
+            <p className="text-lg font-medium text-foreground">Ask me about my experience and projects</p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="h-8 w-8 rounded-full hover:bg-background/50"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close chat</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Tooltip.Provider delayDuration={100}>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onClearChat}
+                    className="h-8 w-8 rounded-full hover:bg-background/50"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    <span className="sr-only">Clear chat history</span>
+                  </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="bottom"
+                    className="z-50 overflow-hidden rounded-md bg-muted border border-border px-3 py-1.5 text-xs text-muted-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+                    sideOffset={4}
+                  >
+                    Clear chat history
+                    <Tooltip.Arrow className="fill-muted border-t border-l border-border" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8 rounded-full hover:bg-background/50"
+            >
+              <X className="h-5 w-5" />
+              <span className="sr-only">Close chat</span>
+            </Button>
+          </div>
         </div>
 
         {/* Messages */}
