@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { useTypingAnimation } from "@/lib/use-typing-animation";
+import { HeroPill } from "@/components/ui/hero-pill";
+import { Button } from "@/components/ui/button";
 
 interface ChatInputProps {
   onSubmit?: (message: string) => void;
@@ -87,19 +88,22 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
         </div>
       </form>
 
-      {/* Suggestion Chips */}
-      <div className="flex flex-wrap justify-center gap-2">
-        {suggestionChips.map((chip, index) => (
-          <Button
-            key={index}
-            variant="outline"
-            size="sm"
-            onClick={() => handleChipClick(chip)}
-            className="rounded-full bg-background/60 backdrop-blur-sm border-border/40 hover:bg-background/80 hover:border-border/60 transition-all duration-200 text-sm"
-          >
-            {chip}
-          </Button>
-        ))}
+      {/* Suggestion Pills */}
+      <div className="relative overflow-hidden w-full">
+        <div className="flex animate-marquee hover:pause-marquee gap-4 whitespace-nowrap">
+          {/* Duplicate the pills for seamless loop */}
+          {[...suggestionChips, ...suggestionChips].map((chip, index) => (
+            <div key={`hero-pill-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0">
+              <HeroPill
+                text={chip}
+                className="hover:scale-105 transition-transform duration-200"
+              />
+            </div>
+          ))}
+        </div>
+        {/* Gradient fade-out effects */}
+        <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10"></div>
+        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none z-10"></div>
       </div>
     </div>
   );
