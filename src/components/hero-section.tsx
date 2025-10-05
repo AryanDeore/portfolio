@@ -43,23 +43,23 @@ export function HeroSection() {
         <div className="space-y-8">
           {/* Greeting */}
           <div className="space-y-4">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
+            <h1 className="text-5xl md:text-7xl lg:text-5xl font-bold tracking-tight">
               Hi, I&apos;m Aryan
             </h1>
             
             {/* Title */}
-            <h2 className="text-2xl md:text-3xl lg:text-4xl text-muted-foreground font-medium">
+            <h2 className="text-2xl md:text-3xl lg:text-2xl text-muted-foreground font-medium">
               AI Engineer
             </h2>
             
-            {/* Tagline */}
+            {/* Tagline
             <p className="text-lg md:text-xl text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed">
               Building LLM-powered tools with LangChain, PyTorch, and fine-tuned LLMs.
-            </p>
+            </p> */}
           </div>
 
           {/* Chat Input */}
-          <div className="pt-8 pb-20">
+          <div className="pt-8">
             <ChatInput onSubmit={handleChatSubmit} />
           </div>
         </div>
@@ -70,10 +70,10 @@ export function HeroSection() {
       {showScrollIndicator && (
         <button
           onClick={scrollToNextSection}
-          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-full p-2"
+          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-300 hover:scale-125 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-full p-3 hover:bg-background/10 backdrop-blur-sm"
           aria-label="Scroll to next section"
         >
-          <ChevronDown className="h-8 w-8 text-muted-foreground/60 animate-bounce hover:text-muted-foreground transition-colors" />
+          <ChevronDown className="h-8 w-8 text-muted-foreground/60 animate-bounce hover:text-foreground transition-all duration-300 hover:drop-shadow-lg" />
         </button>
       )}
     </section>

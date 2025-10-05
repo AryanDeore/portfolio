@@ -194,7 +194,7 @@ export const ThemeToggleButton = ({
       size={showLabel ? 'default' : 'icon'}
       onClick={handleClick}
       className={cn(
-        'relative overflow-hidden',
+        'relative overflow-hidden transition-all duration-300 hover:!scale-110 hover:!-translate-y-0.5 hover:!shadow-lg group',
         // Removed 'transition-all' class to eliminate button transitions
         showLabel && 'gap-2',
         className
@@ -202,9 +202,9 @@ export const ThemeToggleButton = ({
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
     >
       {theme === 'light' ? (
-        <Sun className="h-[1.2rem] w-[1.2rem]" />
+        <Sun className="h-[1.2rem] w-[1.2rem] transition-transform duration-300 group-hover:rotate-12" />
       ) : (
-        <Moon className="h-[1.2rem] w-[1.2rem]" />
+        <Moon className="h-[1.2rem] w-[1.2rem] transition-transform duration-300 group-hover:rotate-12" />
       )}
       {showLabel && (
         <span className="text-sm">
