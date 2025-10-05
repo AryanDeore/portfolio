@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
 import { useTypingAnimation } from "@/lib/use-typing-animation";
 import { HeroPill } from "@/components/ui/hero-pill";
@@ -27,6 +27,11 @@ const typingQuestions = [
 export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const positionRef = useRef(0);
+  
   const typingAnimation = useTypingAnimation({
     texts: typingQuestions,
     typingSpeed: 80,
@@ -37,6 +42,39 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
   // Use typing animation if no custom placeholder is provided and input is not focused
   const shouldShowTypingAnimation = !placeholder && !isFocused && !message;
   const displayPlaceholder = placeholder || "";
+
+  // Marquee animation effect
+  useEffect(() => {
+    const animate = () => {
+      if (!marqueeRef.current || isPaused) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const container = marqueeRef.current;
+      const containerWidth = container.offsetWidth;
+      const contentWidth = container.scrollWidth / 2; // Divide by 2 since we duplicate content
+
+      // Move position
+      positionRef.current -= 0.5; // Adjust speed here (lower = slower)
+
+      // Reset position when first set is completely off screen
+      if (Math.abs(positionRef.current) >= contentWidth) {
+        positionRef.current = 0;
+      }
+
+      container.style.transform = `translateX(${positionRef.current}px)`;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPaused]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,10 +128,24 @@ export function ChatInput({ onSubmit, placeholder }: ChatInputProps) {
 
       {/* Suggestion Pills */}
       <div className="relative overflow-hidden w-full">
-        <div className="flex animate-marquee hover:pause-marquee gap-4 whitespace-nowrap">
-          {/* Duplicate the pills for seamless loop */}
-          {[...suggestionChips, ...suggestionChips].map((chip, index) => (
-            <div key={`hero-pill-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0">
+        <div 
+          ref={marqueeRef}
+          className="flex whitespace-nowrap will-change-transform"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* First set of pills */}
+          {suggestionChips.map((chip, index) => (
+            <div key={`hero-pill-1-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
+              <HeroPill
+                text={chip}
+                className="hover:scale-105 transition-transform duration-200"
+              />
+            </div>
+          ))}
+          {/* Second identical set for seamless loop */}
+          {suggestionChips.map((chip, index) => (
+            <div key={`hero-pill-2-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
               <HeroPill
                 text={chip}
                 className="hover:scale-105 transition-transform duration-200"
