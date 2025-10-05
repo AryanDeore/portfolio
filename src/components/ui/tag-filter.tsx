@@ -5,10 +5,11 @@ import { Search, X, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-interface TagFilterProps {
+export interface TagFilterProps {
   availableTags: string[];
   selectedTags: string[];
   onTagsChange: (tags: string[]) => void;
+  tagAvailability?: Record<string, number>;
   className?: string;
   placeholder?: string;
   showSearch?: boolean;
@@ -19,6 +20,7 @@ export function TagFilter({
   availableTags,
   selectedTags,
   onTagsChange,
+  tagAvailability = {},
   className,
   placeholder = "Search tags...",
   showSearch = true,
@@ -27,13 +29,31 @@ export function TagFilter({
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isExpanded, setIsExpanded] = React.useState(false);
 
-  // Filter tags based on search query
+  // Filter and sort tags based on search query and availability
   const filteredTags = React.useMemo(() => {
-    if (!searchQuery) return availableTags;
-    return availableTags.filter(tag =>
-      tag.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [availableTags, searchQuery]);
+    let tags = availableTags;
+    
+    // Apply search filter if query exists
+    if (searchQuery) {
+      tags = tags.filter(tag =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Sort tags: available first (count > 0), then unavailable (count = 0)
+    // Within each group, maintain alphabetical order
+    return tags.sort((a, b) => {
+      const countA = tagAvailability[a] || 0;
+      const countB = tagAvailability[b] || 0;
+      
+      // If one has count and other doesn't, prioritize the one with count
+      if (countA > 0 && countB === 0) return -1;
+      if (countA === 0 && countB > 0) return 1;
+      
+      // If both have same availability status, sort alphabetically
+      return a.localeCompare(b);
+    });
+  }, [availableTags, searchQuery, tagAvailability]);
 
   // Show limited tags initially, expand on demand
   const visibleTags = isExpanded ? filteredTags : filteredTags.slice(0, maxVisibleTags);
@@ -135,23 +155,28 @@ export function TagFilter({
       {/* Available tags */}
       <div className="space-y-3">
         <div className="text-xs font-medium text-muted-foreground">
-          Available tags ({filteredTags.length})
+          {selectedTags.length > 0 ? "Filter by tags" : "All tags"} ({filteredTags.length})
         </div>
         
         <div className="flex flex-wrap gap-2">
           {visibleTags.map((tag) => {
             const isSelected = selectedTags.includes(tag);
+            const count = tagAvailability[tag] || 0;
+            const isDisabled = !isSelected && count === 0;
+            
             return (
               <button
                 key={tag}
-                onClick={() => handleTagToggle(tag)}
+                onClick={() => !isDisabled && handleTagToggle(tag)}
+                disabled={isDisabled}
                 className={cn(
                   "px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200",
-                  "border border-border/50",
+                  "border border-border/50 relative group",
                   isSelected
                     ? "bg-primary text-primary-foreground border-primary/50 shadow-sm"
-                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground hover:border-border",
-                  "hover:scale-105 active:scale-95"
+                    : isDisabled
+                    ? "bg-muted/30 text-muted-foreground/50 border-border/30 cursor-not-allowed opacity-50"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground hover:border-border hover:scale-105 active:scale-95"
                 )}
               >
                 {tag}

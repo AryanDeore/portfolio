@@ -85,7 +85,7 @@ const projects = [
 export default function Home() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Get all unique tags from projects
+  // Get all unique tags from all projects
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     projects.forEach(project => {
@@ -104,6 +104,31 @@ export default function Home() {
     );
   }, [selectedTags]);
 
+  // Calculate tag availability - how many projects would match if this tag was added
+  const tagAvailability = useMemo(() => {
+    const availability: Record<string, number> = {};
+    
+    allTags.forEach(tag => {
+      if (selectedTags.includes(tag)) {
+        // Already selected - show count of current filtered projects that have this tag
+        availability[tag] = filteredProjects.filter(project => 
+          project.tags.includes(tag)
+        ).length;
+      } else {
+        // Not selected - show count of projects that would match if we added this tag
+        const potentialProjects = selectedTags.length === 0 
+          ? projects.filter(project => project.tags.includes(tag))
+          : projects.filter(project => 
+              project.tags.includes(tag) && 
+              selectedTags.some(selectedTag => project.tags.includes(selectedTag))
+            );
+        availability[tag] = potentialProjects.length;
+      }
+    });
+    
+    return availability;
+  }, [allTags, selectedTags, filteredProjects]);
+
   return (
     <>
       <HeroSection />
@@ -117,15 +142,7 @@ export default function Home() {
           <div className="space-y-8">
             {/* Section header */}
             <header className="mb-8 lg:mb-10">
-              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-                <div>
-                  <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-2">Projects</h2>
-                  <p className="text-muted-foreground">
-                    {filteredProjects.length} of {projects.length} projects
-                    {selectedTags.length > 0 && ` matching your filters`}
-                  </p>
-                </div>
-              </div>
+              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">Projects</h2>
             </header>
 
             {/* Tag Filter */}
@@ -134,9 +151,16 @@ export default function Home() {
                 availableTags={allTags}
                 selectedTags={selectedTags}
                 onTagsChange={setSelectedTags}
+                tagAvailability={tagAvailability}
                 placeholder="Search technologies, categories..."
                 maxVisibleTags={15}
               />
+            </div>
+
+            {/* Results count */}
+            <div className="text-sm text-muted-foreground">
+              {filteredProjects.length} of {projects.length} projects
+              {selectedTags.length > 0 && ` matching your filters`}
             </div>
             
             {/* Projects Grid */}
