@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { ExternalLink, Github, ChevronRight, BookOpen, Rocket } from "lucide-react";
+import { Github, ChevronRight, BookOpen, Rocket } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -75,20 +75,14 @@ export function ProjectCard({
   githubUrl,
   blogUrl,
   launchUrl,
-  status,
   className,
 }: ProjectCardProps) {
   const [imageLoading, setImageLoading] = React.useState(true);
-  const [showFullDescription, setShowFullDescription] = React.useState(false);
   
   const combinedDescription = description.join(" ");
   const maxVisibleTags = 5;
-  const overflowTagCount = Math.max(0, tags.length - maxVisibleTags);
   const visibleTags = tags.slice(0, maxVisibleTags);
 
-  const handleReadMore = () => {
-    setShowFullDescription(!showFullDescription);
-  };
 
   const handleTagClick = (tag: string) => {
     console.log(`Tag clicked: ${tag}`);

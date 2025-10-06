@@ -4,7 +4,7 @@ import "./globals.css";
 import { StickyNav } from "@/components/ui/sticky-navbar";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Home as HomeIcon, User, MessageSquare, Briefcase } from "lucide-react";
+import { Home as HomeIcon, Briefcase } from "lucide-react";
 import Image from "next/image";
 
 const geistSans = Geist({

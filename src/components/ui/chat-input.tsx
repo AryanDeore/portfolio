@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
 import { useTypingAnimation } from "@/lib/use-typing-animation";
 import { HeroPill } from "@/components/ui/hero-pill";
-import { Button } from "@/components/ui/button";
 
 interface ChatInputProps {
   onSubmit?: (message: string) => void;
@@ -54,7 +53,6 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
       }
 
       const container = marqueeRef.current;
-      const containerWidth = container.offsetWidth;
       const contentWidth = container.scrollWidth / 2; // Divide by 2 since we duplicate content
 
       // Move position
