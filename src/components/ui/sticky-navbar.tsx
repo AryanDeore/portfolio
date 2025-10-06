@@ -28,7 +28,7 @@ export const StickyNav = ({
   const [visible, setVisible] = useState(true); // Always start visible
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useMotionValueEvent(scrollYProgress, "change", (current) => {
+  useMotionValueEvent(scrollYProgress, "change", () => {
     // Always keep navbar visible - sticky to top behavior
     setVisible(true);
   });

@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { HeroSection } from "@/components/hero-section";
 import { MaxWidthWrapper } from "@/components/layout/max-width-wrapper";
-import { ProjectCard, ProjectSectionHeader } from "@/components/ui/project-card";
+import { ProjectCard } from "@/components/ui/project-card";
 import { TagFilter } from "@/components/ui/tag-filter";
 
 // Project data with comprehensive tags

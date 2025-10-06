@@ -202,7 +202,7 @@ export function TagFilter({
       {/* No results message */}
       {searchQuery && filteredTags.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
-          <div className="text-sm">No tags found for "{searchQuery}"</div>
+          <div className="text-sm">No tags found for &quot;{searchQuery}&quot;</div>
           <button
             onClick={handleClearSearch}
             className="text-xs text-primary hover:text-primary/80 transition-colors mt-1"
