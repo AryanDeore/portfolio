@@ -8,13 +8,12 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { MessageSquare, RotateCcw } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
+import { Sun, Moon, Menu, X } from "lucide-react";
 
 export const StickyNav = ({
   navItems,
   className,
-  isInChatMode = false,
-  onResetChat,
 }: {
   navItems: {
     name: string;
@@ -22,89 +21,186 @@ export const StickyNav = ({
     icon?: React.ReactElement;
   }[];
   className?: string;
-  isInChatMode?: boolean;
-  onResetChat?: () => void;
 }) => {
   const { scrollYProgress } = useScroll();
+  const { theme, toggleTheme } = useTheme();
 
   const [visible, setVisible] = useState(true); // Always start visible
-
-  // Update visibility when chat mode changes
-  useEffect(() => {
-    if (isInChatMode) {
-      setVisible(true);
-    }
-  }, [isInChatMode]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useMotionValueEvent(scrollYProgress, "change", (current) => {
-    // In chat mode, always show the navbar
-    if (isInChatMode) {
-      setVisible(true);
-      return;
-    }
-
     // Always keep navbar visible - sticky to top behavior
     setVisible(true);
   });
 
+  // Close mobile menu when clicking outside or pressing escape
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isMobileMenuOpen && !target.closest('[data-mobile-menu]')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        initial={{
-          opacity: 1,
-          y: -100,
-        }}
-        animate={{
-          y: visible ? 0 : -100,
-          opacity: visible ? 1 : 0,
-        }}
-        transition={{
-          duration: 0.2,
-        }}
-        className={cn(
-          "flex max-w-fit  fixed top-10 inset-x-0 mx-auto border border-transparent dark:border-white/[0.2] rounded-full dark:bg-black bg-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] z-[5000] pr-2 pl-8 py-2  items-center justify-center space-x-4",
-          className
-        )}
-      >
-        {isInChatMode ? (
-          // Chat mode: Show brand and reset button
-          <>
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-sm">Alex Johnson</span>
-            </div>
-            {onResetChat && (
-              <button
-                onClick={onResetChat}
-                className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-neutral-50 dark:hover:bg-neutral-800"
-              >
-                <RotateCcw className="h-4 w-4" />
-                <span>New Chat</span>
-              </button>
+    <>
+      {/* Hamburger Menu Button - Fixed to top left */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{
+            opacity: 1,
+            y: -100,
+          }}
+          animate={{
+            y: visible ? 0 : -100,
+            opacity: visible ? 1 : 0,
+          }}
+          transition={{
+            duration: 0.2,
+          }}
+          className="fixed top-8 left-8 z-[5001] sm:hidden"
+        >
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-3 bg-background/95 backdrop-blur-sm rounded-full shadow-lg text-muted-foreground hover:text-foreground transition-colors duration-200"
+            aria-label="Toggle mobile menu"
+            data-mobile-menu
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
             )}
-          </>
-        ) : (
-          // Portfolio mode: Show navigation items and login
-          <>
-            {navItems.map((navItem, idx: number) => (
-              <Link
-                key={`link=${idx}`}
-                href={navItem.link}
-                className={cn(
-                  "relative dark:text-neutral-50 items-center flex space-x-1 text-neutral-600 dark:hover:text-neutral-300 hover:text-neutral-500"
-                )}
-              >
-                <span className="block sm:hidden">{navItem.icon}</span>
-                <span className="hidden sm:block text-sm">{navItem.name}</span>
-              </Link>
-            ))}
-            <button className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full">
-              <span>Login</span>
-              <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
-            </button>
-          </>
+          </button>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Main Navigation */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{
+            opacity: 1,
+            y: -100,
+          }}
+          animate={{
+            y: visible ? 0 : -100,
+            opacity: visible ? 1 : 0,
+          }}
+          transition={{
+            duration: 0.2,
+          }}
+          className={cn(
+            "flex fixed top-5 inset-x-0 mx-auto bg-background/95 backdrop-blur-sm rounded-full shadow-lg z-[5000] px-8 py-0 items-center justify-center space-x-6",
+            // Ensure navbar doesn't stretch too wide on ultra-wide screens - use max-w-fit for content-based width with a reasonable maximum
+            "max-w-fit",
+            className
+          )}
+        >
+          {navItems.map((navItem, idx: number) => (
+            <Link
+              key={`link=${idx}`}
+              href={navItem.link}
+              className={cn(
+                "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 rounded-md",
+                // Responsive padding
+                "px-1 py-0", // Mobile: compact padding
+                "sm:px-2 sm:py-0" // Desktop: normal padding
+              )}
+            >
+              {navItem.name ? (
+                <>
+                  <span className="hidden sm:block text-lg">{navItem.name}</span>
+                </>
+              ) : (
+                <span className="block">{navItem.icon}</span>
+              )}
+            </Link>
+          ))}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-20 left-4 w-64 bg-background/95 backdrop-blur-sm rounded-2xl shadow-lg z-[4999] sm:hidden"
+            data-mobile-menu
+          >
+            <div className="p-4 space-y-2">
+              {navItems
+                .filter(item => item.name) // Only show named items in mobile menu
+                .map((navItem, idx) => (
+                  <Link
+                    key={`mobile-link=${idx}`}
+                    href={navItem.link}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors duration-200"
+                  >
+                    <div className="flex items-center space-x-3">
+                      {navItem.icon && <span>{navItem.icon}</span>}
+                      <span className="text-lg">{navItem.name}</span>
+                    </div>
+                  </Link>
+                ))}
+            </div>
+          </motion.div>
         )}
-      </motion.div>
-    </AnimatePresence>
+      </AnimatePresence>
+
+      {/* Theme Toggle - Inside max-width container, aligned right */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{
+            opacity: 1,
+            y: -100,
+          }}
+          animate={{
+            y: visible ? 0 : -100,
+            opacity: visible ? 1 : 0,
+          }}
+          transition={{
+            duration: 0.2,
+          }}
+          className="fixed top-7 left-0 right-0 z-[5000] pointer-events-none"
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end rounded-md">
+            <div className="pointer-events-auto">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-md hover:bg-background/20 transition-colors duration-200 text-muted-foreground hover:text-foreground"
+                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+              >
+                {theme === 'light' ? (
+                  <Sun className="h-6 w-6" />
+                ) : (
+                  <Moon className="h-6 w-6" />
+                )}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </>
   );
 };

@@ -66,10 +66,33 @@
   --shadow-opacity: var(--shadow-opacity);
   --color-shadow-color: var(--shadow-color);
   --color-destructive-foreground: var(--destructive-foreground);
+  --animate-slide-up-fade: slide-up-fade 0.4s ease-out;
+
+  @keyframes slide-up-fade {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slide-up-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+    }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    }
+  }
+
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.875rem;
   --background: oklch(0.9821 0 0);
   --foreground: oklch(0.2435 0 0);
   --card: oklch(0.9911 0 0);
@@ -208,6 +231,59 @@
 
   .glass-effect {
     @apply bg-background/80 backdrop-blur-md border border-border/50;
+  }
+
+  /* Ultra-wide screen utilities */
+  .ultra-wide-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .content-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .narrow-container {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* No scrollbar utility */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Modern glass card effects */
+  .glass-card {
+    @apply bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))];
+    @apply backdrop-blur-[2px];
+    @apply border border-white/10 dark:border-white/10;
+    @apply shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_10px_30px_-15px_rgba(0,0,0,0.4)];
+  }
+
+  .glass-card-hover {
+    @apply transition-all hover:border-primary/30 hover:shadow-[0_0_0_1px_hsl(var(--primary)/0.25),0_14px_40px_-12px_hsl(var(--primary)/0.15)];
   }
 }
 

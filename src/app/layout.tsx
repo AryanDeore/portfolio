@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { StickyNav } from "@/components/ui/sticky-navbar";
 import { Footer } from "@/components/layout/footer";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Home as HomeIcon, User, MessageSquare, Briefcase } from "lucide-react";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,38 +18,34 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alex Johnson - Full Stack Developer",
-  description: "Portfolio showcasing full-stack development expertise.",
-  keywords: ["Full Stack Developer", "React", "Next.js", "TypeScript", "Portfolio"],
-  authors: [{ name: "Alex Johnson" }],
-  creator: "Alex Johnson",
+  title: "Aryan AI Dev",
+  description: "Portfolio showcasing AI development expertise.",
+  keywords: ["AI Developer", "Python", "LLM", "Langchain"],
+  authors: [{ name: "Aryan" }],
+  creator: "Aryan",
   openGraph: {
-    title: "Alex Johnson - Full Stack Developer",
-    description: "Portfolio showcasing full-stack development expertise",
+    title: "Aryan - AI Developer",
+    description: "Portfolio showcasing AI development expertise",
     type: "website",
+    images: ["/favicon.svg"],
   },
 };
 
 const navItems = [
   {
-    name: "Home",
+    name: "Ask AI",
     link: "#",
-    icon: <HomeIcon className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    icon: <HomeIcon className="h-4 w-4 text-muted-foreground" />,
   },
   {
-    name: "About",
-    link: "#about",
-    icon: <User className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    name: "",
+    link: "#",
+    icon: <Image src="/website-icon.svg" alt="Logo" width={10} height={10} className="h-15 w-15" />,
   },
   {
     name: "Projects",
     link: "#projects",
-    icon: <Briefcase className="h-4 w-4 text-neutral-500 dark:text-white" />,
-  },
-  {
-    name: "Contact",
-    link: "#contact",
-    icon: <MessageSquare className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    icon: <Briefcase className="h-4 w-4 text-muted-foreground" />,
   },
 ];
 
@@ -57,15 +55,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+              }
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <StickyNav navItems={navItems} />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
+        <ThemeProvider>
+          <StickyNav navItems={navItems} />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

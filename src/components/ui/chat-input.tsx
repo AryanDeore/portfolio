@@ -1,0 +1,189 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { Send } from "lucide-react";
+import { useTypingAnimation } from "@/lib/use-typing-animation";
+import { HeroPill } from "@/components/ui/hero-pill";
+import { Button } from "@/components/ui/button";
+
+interface ChatInputProps {
+  onSubmit?: (message: string) => void;
+  placeholder?: string;
+  hidePills?: boolean;
+}
+
+const suggestionChips = [
+  "Do you know PyTorch?",
+  "Are you familiar with LLMs?",
+  "Any LLM fine-tuning experience?",
+];
+
+const typingQuestions = [
+  "Do you know PyTorch?",
+  "Are you familiar with ChatGPT-style LLM APIs?",
+  "Have you fine-tuned LLMs?",
+  "Have you created a RAG?",
+];
+
+export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInputProps) {
+  const [message, setMessage] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const positionRef = useRef(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  const typingAnimation = useTypingAnimation({
+    texts: typingQuestions,
+    typingSpeed: 80,
+    deletingSpeed: 40,
+    pauseDuration: 1500,
+  });
+
+  // Use typing animation if no custom placeholder is provided and input is not focused
+  const shouldShowTypingAnimation = !placeholder && !isFocused && !message;
+  const displayPlaceholder = placeholder || "";
+
+  // Marquee animation effect
+  useEffect(() => {
+    const animate = () => {
+      if (!marqueeRef.current || isPaused) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const container = marqueeRef.current;
+      const containerWidth = container.offsetWidth;
+      const contentWidth = container.scrollWidth / 2; // Divide by 2 since we duplicate content
+
+      // Move position
+      positionRef.current -= 0.5; // Adjust speed here (lower = slower)
+
+      // Reset position when first set is completely off screen
+      if (Math.abs(positionRef.current) >= contentWidth) {
+        positionRef.current = 0;
+      }
+
+      container.style.transform = `translateX(${positionRef.current}px)`;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [isPaused]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      // Reset height to auto to get the correct scrollHeight
+      textarea.style.height = 'auto';
+      // Set height to scrollHeight to fit content
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [message]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.trim() && onSubmit) {
+      onSubmit(message.trim());
+      setMessage("");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (message.trim() && onSubmit) {
+        onSubmit(message.trim());
+        setMessage("");
+      }
+    }
+  };
+
+  const handleChipClick = (chipText: string) => {
+    setMessage(chipText);
+  };
+
+  return (
+    <div className="w-full max-w-2xl mx-auto space-y-4">
+      {/* Chat Input */}
+      <form onSubmit={handleSubmit} className="relative">
+        <div className="relative flex items-start">
+          <textarea
+            ref={textareaRef}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder={displayPlaceholder}
+            rows={1}
+            style={{ resize: 'none' }}
+            className="w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-border/70 dark:border-border rounded-3xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 dark:focus:border-primary/70 transition-all duration-200 placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-scroll"
+          />
+          
+          {/* Animated typing text with cursor overlay */}
+          {shouldShowTypingAnimation && (
+            <div className="absolute left-6 top-5 pointer-events-none text-base text-muted-foreground/60 flex items-center">
+              <span>{typingAnimation.text}</span>
+              <span 
+                className={`ml-0.5 w-0.5 h-5 bg-muted-foreground/60 transition-opacity duration-100 ${
+                  typingAnimation.showCursor ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+            </div>
+          )}
+          <button
+            type="submit"
+            className="absolute right-3 top-4 p-2 disabled:opacity-50 transition-opacity"
+            disabled={!message.trim()}
+          >
+            <Send className="h-5 w-5 text-primary hover:text-primary/80 transition-colors rotate-45" />
+            <span className="sr-only">Send message</span>
+          </button>
+        </div>
+      </form>
+
+      {/* Suggestion Pills */}
+      {!hidePills && (
+        <div className="relative overflow-hidden w-full">
+          <div 
+            ref={marqueeRef}
+            className="flex whitespace-nowrap will-change-transform"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            {/* First set of pills */}
+            {suggestionChips.map((chip, index) => (
+              <div key={`hero-pill-1-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
+                <HeroPill
+                  text={chip}
+                  className="hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+            ))}
+            {/* Second identical set for seamless loop */}
+            {suggestionChips.map((chip, index) => (
+              <div key={`hero-pill-2-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
+                <HeroPill
+                  text={chip}
+                  className="hover:scale-105 transition-transform duration-200"
+                />
+              </div>
+            ))}
+          </div>
+          {/* Gradient fade-out effects */}
+          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10"></div>
+          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none z-10"></div>
+        </div>
+      )}
+    </div>
+  );
+}
