@@ -9,7 +9,9 @@ export async function POST(req: NextRequest) {
   const body = await req.text(); // keep raw so we can forward as-is
   const r = await fetch(`${process.env.BACKEND_URL}/chat/stream`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+      "X-API-Key": process.env.API_KEY || "",
+     },
     body,
   });
 
