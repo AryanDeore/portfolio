@@ -222,7 +222,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                     )}
                     
                     {message.sender === "assistant" ? (
-                      <div className="text-sm leading-relaxed markdown-content prose prose-sm dark:prose-invert max-w-none">
+                      <div className="text-lg leading-relaxed markdown-content prose prose-lg dark:prose-invert max-w-none">
                         <ReactMarkdown 
                           components={{
                             p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -231,15 +231,15 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                             li: ({ children }) => <li className="leading-relaxed">{children}</li>,
                             strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
                             em: ({ children }) => <em className="italic">{children}</em>,
-                            h1: ({ children }) => <h1 className="text-lg font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
-                            h2: ({ children }) => <h2 className="text-base font-bold mb-2 mt-3 first:mt-0">{children}</h2>,
-                            h3: ({ children }) => <h3 className="text-sm font-semibold mb-2 mt-3 first:mt-0">{children}</h3>,
+                            h1: ({ children }) => <h1 className="text-2xl font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-xl font-bold mb-2 mt-3 first:mt-0">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-lg font-semibold mb-2 mt-3 first:mt-0">{children}</h3>,
                             code: ({ children, className }) => {
                               const isInline = !className;
                               return isInline ? (
-                                <code className="px-1.5 py-0.5 bg-muted rounded text-xs font-mono">{children}</code>
+                                <code className="px-1.5 py-0.5 bg-muted rounded text-base font-mono">{children}</code>
                               ) : (
-                                <code className="block p-3 bg-muted rounded-lg text-xs font-mono overflow-x-auto">{children}</code>
+                                <code className="block p-3 bg-muted rounded-lg text-base font-mono overflow-x-auto">{children}</code>
                               );
                             },
                             pre: ({ children }) => <pre className="mb-3">{children}</pre>,
