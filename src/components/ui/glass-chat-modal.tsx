@@ -222,13 +222,13 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                     )}
                     
                     {message.sender === "assistant" ? (
-                      <div className="text-lg leading-relaxed markdown-content prose prose-lg dark:prose-invert max-w-none">
+                      <div className="text-lg leading-normal markdown-content prose prose-lg dark:prose-invert max-w-none">
                         <ReactMarkdown 
                           components={{
-                            p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                            ul: ({ children }) => <ul className="list-disc list-outside mb-3 space-y-1.5 ml-4">{children}</ul>,
-                            ol: ({ children }) => <ol className="list-decimal list-outside mb-3 space-y-1.5 ml-4">{children}</ol>,
-                            li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                            p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
+                            ul: ({ children }) => <ul className="list-disc list-outside mb-3 space-y-1 ml-4">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal list-outside mb-3 space-y-1 ml-4">{children}</ol>,
+                            li: ({ children }) => <li className="leading-normal">{children}</li>,
                             strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
                             em: ({ children }) => <em className="italic">{children}</em>,
                             h1: ({ children }) => <h1 className="text-2xl font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
