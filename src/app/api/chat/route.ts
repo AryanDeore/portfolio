@@ -9,7 +9,9 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const r = await fetch(`${process.env.BACKEND_URL}/chat`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+      "X-API-Key": process.env.API_KEY || "",
+     },
     body: JSON.stringify(body),
     // optionally forward cookies/headers as needed
   });
