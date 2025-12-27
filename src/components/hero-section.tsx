@@ -6,6 +6,7 @@ import { AnimatedBackground } from "@/components/ui/animated-background";
 import { ChatInput } from "@/components/ui/chat-input";
 import { MaxWidthWrapper } from "@/components/layout/max-width-wrapper";
 import { GlassChatModal } from "@/components/ui/glass-chat-modal";
+import { useChat } from "@/lib/use-chat";
 
 interface Message {
   id: string;
@@ -18,8 +19,10 @@ export function HeroSection() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showStickyInput, setShowStickyInput] = useState(false);
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
   const heroInputRef = useRef<HTMLDivElement>(null);
+  
+  // Use the useChat hook to handle backend communication
+  const { messages: chatMessages, isLoading, send, reset } = useChat();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,31 +48,22 @@ export function HeroSection() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleChatSubmit = (message: string) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: message,
-      sender: "user",
-      timestamp: new Date(),
-    };
+  // Transform useChat messages to GlassChatModal format
+  const messages: Message[] = chatMessages.map((msg, index) => ({
+    id: `${index}-${msg.role}-${msg.content.slice(0, 20).replace(/\s/g, '-')}`,
+    content: msg.content,
+    sender: msg.role,
+    timestamp: new Date(),
+  }));
 
-    const responses = [
-      "That's a great question! I'd be happy to share more about my experience with that technology.",
-      "I have extensive experience with that! Let me tell you more about how I've used it in my projects.",
-      "Absolutely! That's one of my core areas of expertise. I've worked on several projects involving that.",
-      "Yes, I'm quite familiar with that technology. Would you like to know about any specific projects I've worked on?",
-      "Thanks for your question! I'm Aryan, an AI Engineer with experience in PyTorch, LangChain, and LLM fine-tuning. How can I help you learn more about my background and projects?",
-    ];
+  const handleChatSubmit = async (message: string) => {
+    // Open modal when first message is sent
+    if (!isChatModalOpen) {
+      setIsChatModalOpen(true);
+    }
     
-    const aiResponse: Message = {
-      id: (Date.now() + 1).toString(),
-      content: responses[Math.floor(Math.random() * responses.length)],
-      sender: "assistant",
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage, aiResponse]);
-    setIsChatModalOpen(true);
+    // Use the send function from useChat hook to call the backend
+    await send(message, { stream: true });
   };
 
   const handleCloseChatModal = () => {
@@ -77,7 +71,7 @@ export function HeroSection() {
   };
 
   const handleClearChat = () => {
-    setMessages([]);
+    reset(); // Use reset from useChat hook
   };
 
   const scrollToNextSection = () => {
