@@ -89,7 +89,9 @@ export function useChat() {
           let acc = "";
           // create placeholder assistant message and update progressively
           setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-          const idx = messages.length + 1; // last message index (assistant)
+          // Calculate the index: after adding user message, messages.length increased by 1
+          // After adding placeholder, the assistant message is at messages.length
+          const assistantIdx = messages.length + 1; // user message index + 1 = assistant index
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -97,7 +99,9 @@ export function useChat() {
             acc += chunk;
             setMessages((prev) => {
               const copy = [...prev];
-              copy[idx] = { role: "assistant", content: acc };
+              if (copy[assistantIdx]) {
+                copy[assistantIdx] = { role: "assistant", content: acc };
+              }
               return copy;
             });
           }
