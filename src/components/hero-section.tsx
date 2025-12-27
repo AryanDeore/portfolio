@@ -22,7 +22,7 @@ export function HeroSection() {
   const heroInputRef = useRef<HTMLDivElement>(null);
   
   // Use the useChat hook to handle backend communication
-  const { messages: chatMessages, isLoading, send, reset } = useChat();
+  const { messages: chatMessages, send, reset } = useChat();
 
   useEffect(() => {
     const handleScroll = () => {
