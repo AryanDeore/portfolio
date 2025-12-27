@@ -18,9 +18,10 @@ interface GlassChatModalProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   onClearChat: () => void;
+  isLoading?: boolean;
 }
 
-export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onClearChat }: GlassChatModalProps) {
+export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onClearChat, isLoading = false }: GlassChatModalProps) {
   const [currentMessage, setCurrentMessage] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -182,6 +183,20 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
             </div>
           ))}
           
+          {/* Loading indicator */}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-muted/50 backdrop-blur-sm border border-border/30">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           
           <div ref={messagesEndRef} />
         </div>
