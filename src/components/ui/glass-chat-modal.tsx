@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X, Send, RotateCcw } from "lucide-react";
+import { X, Send, RotateCcw, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import ReactMarkdown from "react-markdown";
@@ -19,14 +19,22 @@ interface GlassChatModalProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   onClearChat: () => void;
+  isLoading?: boolean;
 }
 
-export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onClearChat }: GlassChatModalProps) {
+export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onClearChat, isLoading }: GlassChatModalProps) {
   const [currentMessage, setCurrentMessage] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+
+  const handleCopy = async (content: string, messageId: string) => {
+    await navigator.clipboard.writeText(content);
+    setCopiedMessageId(messageId);
+    setTimeout(() => setCopiedMessageId(null), 2000);
+  };
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
@@ -166,43 +174,111 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                  message.sender === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted/50 backdrop-blur-sm border border-border/30"
-                }`}
-              >
-                {message.sender === "assistant" ? (
-                  <div className="text-sm leading-relaxed markdown-content">
-                    <ReactMarkdown 
-                      components={{
-                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                        ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1 ml-2">{children}</ul>,
-                        ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1 ml-2">{children}</ol>,
-                        li: ({ children }) => <li className="ml-1">{children}</li>,
-                        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                        em: ({ children }) => <em className="italic">{children}</em>,
-                        h1: ({ children }) => <h1 className="text-lg font-bold mb-2 mt-3 first:mt-0">{children}</h1>,
-                        h2: ({ children }) => <h2 className="text-base font-bold mb-2 mt-3 first:mt-0">{children}</h2>,
-                        h3: ({ children }) => <h3 className="text-sm font-semibold mb-1 mt-2 first:mt-0">{children}</h3>,
-                      }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
-                  </div>
-                ) : (
-                  <p className="text-sm leading-relaxed">{message.content}</p>
-                )}
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+              <div className="text-4xl mb-4">👋</div>
+              <h3 className="text-xl font-semibold text-foreground">Ask me anything!</h3>
+              <p className="text-muted-foreground max-w-md">
+                I can tell you about my projects, experience, skills, and more.
+              </p>
+              <div className="flex flex-wrap gap-2 justify-center mt-4">
+                {["Tell me about your projects", "What's your experience?", "What technologies do you know?"].map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    onClick={() => onSendMessage(suggestion)}
+                    className="px-4 py-2 text-sm bg-muted/50 hover:bg-muted border border-border/30 rounded-full transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
               </div>
             </div>
-          ))}
-          
+          ) : (
+            <>
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"} group`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 relative ${
+                      message.sender === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted/50 backdrop-blur-sm border border-border/30"
+                    }`}
+                  >
+                    {message.sender === "assistant" && message.content && (
+                      <button
+                        onClick={() => handleCopy(message.content, message.id)}
+                        className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 bg-background border border-border rounded-full hover:bg-muted"
+                        aria-label="Copy message"
+                      >
+                        {copiedMessageId === message.id ? (
+                          <Check className="h-3 w-3" />
+                        ) : (
+                          <Copy className="h-3 w-3" />
+                        )}
+                      </button>
+                    )}
+                    
+                    {message.sender === "assistant" ? (
+                      <div className="text-sm leading-relaxed markdown-content prose prose-sm dark:prose-invert max-w-none">
+                        <ReactMarkdown 
+                          components={{
+                            p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                            ul: ({ children }) => <ul className="list-disc list-outside mb-3 space-y-1.5 ml-4">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal list-outside mb-3 space-y-1.5 ml-4">{children}</ol>,
+                            li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                            strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                            em: ({ children }) => <em className="italic">{children}</em>,
+                            h1: ({ children }) => <h1 className="text-lg font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-base font-bold mb-2 mt-3 first:mt-0">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-sm font-semibold mb-2 mt-3 first:mt-0">{children}</h3>,
+                            code: ({ children, className }) => {
+                              const isInline = !className;
+                              return isInline ? (
+                                <code className="px-1.5 py-0.5 bg-muted rounded text-xs font-mono">{children}</code>
+                              ) : (
+                                <code className="block p-3 bg-muted rounded-lg text-xs font-mono overflow-x-auto">{children}</code>
+                              );
+                            },
+                            pre: ({ children }) => <pre className="mb-3">{children}</pre>,
+                            a: ({ href, children }) => (
+                              <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                {children}
+                              </a>
+                            ),
+                            blockquote: ({ children }) => (
+                              <blockquote className="border-l-4 border-primary/30 pl-4 italic my-3 text-muted-foreground">
+                                {children}
+                              </blockquote>
+                            ),
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-sm leading-relaxed">{message.content}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+              
+              {/* Typing indicator */}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-muted/50 backdrop-blur-sm border border-border/30 rounded-2xl px-4 py-3">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           
           <div ref={messagesEndRef} />
         </div>
