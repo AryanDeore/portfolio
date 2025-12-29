@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
-import { useTypingAnimation } from "@/lib/use-typing-animation";
+import { useAnimatedPlaceholder } from "@/lib/use-animated-placeholder";
 import { HeroPill } from "@/components/ui/hero-pill";
 
 interface ChatInputProps {
@@ -17,32 +17,22 @@ const suggestionChips = [
   "Any LLM fine-tuning experience?",
 ];
 
-const typingQuestions = [
-  "Do you know PyTorch?",
-  "Are you familiar with ChatGPT-style LLM APIs?",
-  "Have you fine-tuned LLMs?",
-  "Have you created a RAG?",
-];
-
 export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [animationStopped, setAnimationStopped] = useState(false);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const positionRef = useRef(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
-  const typingAnimation = useTypingAnimation({
-    texts: typingQuestions,
-    typingSpeed: 80,
-    deletingSpeed: 40,
-    pauseDuration: 1500,
+  // Animated placeholder - only active when idle, not focused, no message, and not stopped
+  const shouldAnimatePlaceholder = !placeholder && !isFocused && !message && !animationStopped;
+  const animatedPlaceholder = useAnimatedPlaceholder({
+    isActive: shouldAnimatePlaceholder,
   });
-
-  // Use typing animation if no custom placeholder is provided and input is not focused
-  const shouldShowTypingAnimation = !placeholder && !isFocused && !message;
   const displayPlaceholder = placeholder || "";
 
   // Marquee animation effect
@@ -143,9 +133,19 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
           <textarea
             ref={textareaRef}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              // Stop animation when user types
+              if (e.target.value.length > 0) {
+                setAnimationStopped(true);
+              }
+            }}
             onKeyDown={handleKeyDown}
-            onFocus={() => setIsFocused(true)}
+            onFocus={() => {
+              setIsFocused(true);
+              // Stop animation when user focuses
+              setAnimationStopped(true);
+            }}
             onBlur={() => setIsFocused(false)}
             placeholder={displayPlaceholder}
             rows={1}
@@ -153,13 +153,13 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
             className="chat-input w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-primary/45 dark:border-primary/35 rounded-3xl focus:outline-none focus:border-primary/70 dark:focus:border-primary/80 hover:border-primary/65 dark:hover:border-primary/55 transition-all duration-[200ms] placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-scroll"
           />
           
-          {/* Animated typing text with cursor overlay */}
-          {shouldShowTypingAnimation && (
+          {/* Animated placeholder text with cursor overlay */}
+          {shouldAnimatePlaceholder && (
             <div className="absolute left-6 top-5 pointer-events-none text-base text-muted-foreground/60 flex items-center">
-              <span>{typingAnimation.text}</span>
+              <span>{animatedPlaceholder.text}</span>
               <span 
                 className={`ml-0.5 w-0.5 h-5 bg-muted-foreground/60 transition-opacity duration-100 ${
-                  typingAnimation.showCursor ? 'opacity-100' : 'opacity-0'
+                  animatedPlaceholder.showCursor ? 'opacity-100' : 'opacity-0'
                 }`}
               />
             </div>
