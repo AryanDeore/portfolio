@@ -28,6 +28,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
   const positionRef = useRef(0);
@@ -87,6 +88,31 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
     }
   }, [message]);
 
+  // Page-load attention nudge (one-time animation)
+  useEffect(() => {
+    if (hasAnimated || !textareaRef.current) return;
+    
+    // Check for reduced motion preference (client-side only)
+    const prefersReducedMotion = typeof window !== 'undefined' 
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+      : false;
+    
+    if (!prefersReducedMotion) {
+      const textarea = textareaRef.current;
+      textarea.classList.add('chat-input-attention-nudge');
+      setHasAnimated(true);
+      
+      // Remove animation class after animation completes
+      const timeout = setTimeout(() => {
+        textarea.classList.remove('chat-input-attention-nudge');
+      }, 500);
+      
+      return () => clearTimeout(timeout);
+    } else {
+      setHasAnimated(true);
+    }
+  }, [hasAnimated]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && onSubmit) {
@@ -124,7 +150,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
             placeholder={displayPlaceholder}
             rows={1}
             style={{ resize: 'none' }}
-            className="w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-border/70 dark:border-border rounded-3xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 dark:focus:border-primary/70 transition-all duration-200 placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-scroll"
+            className="chat-input w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-primary/30 dark:border-primary/25 rounded-3xl focus:outline-none focus:border-primary/70 dark:focus:border-primary/80 hover:border-primary/45 dark:hover:border-primary/40 transition-all duration-[200ms] placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-scroll"
           />
           
           {/* Animated typing text with cursor overlay */}
