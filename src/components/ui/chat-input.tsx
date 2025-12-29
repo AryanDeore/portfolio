@@ -105,7 +105,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
       // Remove animation class after animation completes
       const timeout = setTimeout(() => {
         textarea.classList.remove('chat-input-attention-nudge');
-      }, 500);
+      }, 4600);
       
       return () => clearTimeout(timeout);
     } else {
