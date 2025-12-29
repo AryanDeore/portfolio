@@ -150,7 +150,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
             placeholder={displayPlaceholder}
             rows={1}
             style={{ resize: 'none' }}
-            className="chat-input w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-primary/30 dark:border-primary/25 rounded-3xl focus:outline-none focus:border-primary/70 dark:focus:border-primary/80 hover:border-primary/45 dark:hover:border-primary/40 transition-all duration-[200ms] placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-scroll"
+            className="chat-input w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-primary/45 dark:border-primary/35 rounded-3xl focus:outline-none focus:border-primary/70 dark:focus:border-primary/80 hover:border-primary/65 dark:hover:border-primary/55 transition-all duration-[200ms] placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-scroll"
           />
           
           {/* Animated typing text with cursor overlay */}
