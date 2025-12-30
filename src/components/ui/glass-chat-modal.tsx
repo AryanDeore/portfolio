@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X, Send, Trash2, Copy, Check } from "lucide-react";
+import { X, Send, Trash2, Copy, Check, Github, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import ReactMarkdown from "react-markdown";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 interface Message {
   id: string;
@@ -232,9 +233,40 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                         <ReactMarkdown 
                           components={{
                             p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
-                            ul: ({ children }) => <ul className="list-disc list-outside mb-3 space-y-1 ml-4">{children}</ul>,
-                            ol: ({ children }) => <ol className="list-decimal list-outside mb-3 space-y-1 ml-4">{children}</ol>,
-                            li: ({ children }) => <li className="leading-normal">{children}</li>,
+                            ul: ({ children }) => {
+                              // Check if all children are link chips - if so, render them in a flex container
+                              const childrenArray = Array.isArray(children) ? children : [children];
+                              const allAreLinks = childrenArray.every((child: any) => {
+                                const childStr = String(child?.props?.children || child);
+                                return childStr.includes('Live:') || childStr.includes('GitHub:') || 
+                                       (child?.props?.children && typeof child.props.children === 'object');
+                              });
+                              
+                              if (allAreLinks && childrenArray.length > 0) {
+                                return <div className="mb-3 flex flex-wrap gap-2">{children}</div>;
+                              }
+                              return <ul className="mb-3 space-y-2">{children}</ul>;
+                            },
+                            ol: ({ children }) => <ol className="mb-3 space-y-2">{children}</ol>,
+                            li: ({ children }) => {
+                              // Extract text content to check for link patterns
+                              const extractText = (node: any): string => {
+                                if (typeof node === 'string') return node;
+                                if (typeof node === 'number') return String(node);
+                                if (Array.isArray(node)) return node.map(extractText).join('');
+                                if (node?.props?.children) return extractText(node.props.children);
+                                return '';
+                              };
+                              
+                              const textContent = extractText(children);
+                              const hasLinkPattern = textContent.includes('Live:') || textContent.includes('GitHub:');
+                              
+                              // If it's a link item, render without bullet
+                              if (hasLinkPattern) {
+                                return <div className="inline-block">{children}</div>;
+                              }
+                              return <li className="leading-normal ml-4 list-disc">{children}</li>;
+                            },
                             strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
                             em: ({ children }) => <em className="italic">{children}</em>,
                             h1: ({ children }) => <h1 className="text-2xl font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
@@ -249,11 +281,69 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                               );
                             },
                             pre: ({ children }) => <pre className="mb-3">{children}</pre>,
-                            a: ({ href, children }) => (
-                              <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                {children}
-                              </a>
-                            ),
+                            a: ({ href, children }) => {
+                              if (!href) return <a>{children}</a>;
+                              
+                              // Extract text content from children (handles React elements)
+                              const extractText = (node: any): string => {
+                                if (typeof node === 'string') return node;
+                                if (typeof node === 'number') return String(node);
+                                if (Array.isArray(node)) return node.map(extractText).join('');
+                                if (node?.props?.children) return extractText(node.props.children);
+                                return '';
+                              };
+                              
+                              const linkText = extractText(children);
+                              const isGitHub = href.includes('github.com');
+                              const isLiveLink = linkText.toLowerCase().includes('live') || 
+                                                (!isGitHub && (href.startsWith('http://') || href.startsWith('https://')));
+                              
+                              // Render as card chip for GitHub and Live links - matching project card button styles
+                              if (isGitHub || isLiveLink) {
+                                const Icon = isGitHub ? Github : Rocket;
+                                // Extract label - remove "Live:" or "GitHub:" prefix if present
+                                let label = linkText
+                                  .replace(/^(live|github):\s*/i, '')
+                                  .trim();
+                                
+                                // If label is empty or just the URL, use a default
+                                if (!label || label === href) {
+                                  label = isGitHub ? 'GitHub' : 'Launch';
+                                }
+                                
+                                // GitHub uses enhanced outline variant, Live/Launch uses primary variant
+                                const isGitHubStyle = isGitHub;
+                                
+                                return (
+                                  <a 
+                                    href={href} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className={cn(
+                                      "group inline-flex items-center justify-center gap-1.5 h-8 px-3 text-xs rounded-md font-medium transition-all duration-200 whitespace-nowrap",
+                                      isGitHubStyle
+                                        ? "border border-border/60 bg-gradient-to-br from-background/90 to-background/70 backdrop-blur-sm shadow-sm hover:shadow-lg hover:border-primary/50 hover:bg-gradient-to-br hover:from-background hover:to-background/90 hover:scale-[1.02] dark:bg-gradient-to-br dark:from-input/50 dark:to-input/30 dark:border-input/80 dark:hover:border-primary/50 dark:hover:from-input/60 dark:hover:to-input/40"
+                                        : "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:scale-[1.02]"
+                                    )}
+                                  >
+                                    <Icon className={cn(
+                                      "w-3 h-3 shrink-0 transition-all duration-200",
+                                      isGitHubStyle && "text-foreground/80 group-hover:text-primary group-hover:scale-110"
+                                    )} />
+                                    <span className={cn(
+                                      isGitHubStyle && "text-foreground/90 group-hover:text-foreground"
+                                    )}>{label}</span>
+                                  </a>
+                                );
+                              }
+                              
+                              // Regular link styling
+                              return (
+                                <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                  {children}
+                                </a>
+                              );
+                            },
                             blockquote: ({ children }) => (
                               <blockquote className="border-l-4 border-primary/30 pl-4 italic my-3 text-muted-foreground">
                                 {children}
