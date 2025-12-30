@@ -32,10 +32,15 @@ export function HeroPill({
       <Pill
         variant="outline"
         className={cn(
-          "inline-flex items-center justify-center px-3 py-1.5 text-foreground/90 dark:text-foreground/80 border-0 whitespace-normal break-words transition-all duration-200",
+          "inline-flex items-center justify-center px-3 py-1.5 whitespace-normal break-words transition-all duration-200",
+          "text-foreground/90 dark:text-foreground/90",
+          // Glassmorphism - use important to override Badge defaults
+          "!bg-gray-200/60 dark:!bg-[rgba(255,255,255,0.12)]",
+          "!border !border-gray-200/60 dark:!border-transparent",
+          "backdrop-blur-[10px]",
           isPressed 
-            ? "scale-[0.96] shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] bg-accent/60 dark:bg-accent/70"
-            : "bg-background shadow-sm shadow-black/[.12] dark:bg-accent hover:bg-accent/80"
+            ? "scale-[0.96] !bg-gray-200/70 dark:!bg-[rgba(255,255,255,0.12)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]"
+            : "hover:!border-gray-300/80 dark:hover:!border-white/40"
         )}
       >
         {icon && (

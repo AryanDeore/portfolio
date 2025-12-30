@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Send, Shuffle } from "lucide-react";
 import { useAnimatedPlaceholder } from "@/lib/use-animated-placeholder";
 import { HeroPill } from "@/components/ui/hero-pill";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 interface ChatInputProps {
   onSubmit?: (message: string) => void;
@@ -198,14 +199,28 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
             ))}
           </div>
           <div className="flex justify-center">
-            <button
-              onClick={handleShuffle}
-              className="flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 p-2 rounded-md hover:bg-accent/50"
-              aria-label="Shuffle questions"
-              title="Shuffle questions"
-            >
-              <Shuffle className="h-4 w-4" />
-            </button>
+            <Tooltip.Provider delayDuration={100}>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <button
+                    onClick={handleShuffle}
+                    className="flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 p-2 rounded-md hover:bg-accent/50"
+                    aria-label="Shuffle questions"
+                  >
+                    <Shuffle className="h-4 w-4" />
+                  </button>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    side="right"
+                    className="z-50 px-2 py-1 text-xs text-muted-foreground bg-transparent animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+                    sideOffset={8}
+                  >
+                    Shuffle questions
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           </div>
         </div>
       )}
