@@ -74,7 +74,75 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
   // Handle click outside modal
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      // Get the element at the actual click coordinates (respects z-index stacking)
+      const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
+      const target = e.target as HTMLElement;
+      
+      if (!elementAtPoint && !target) return;
+      
+      // Helper to check if element should be excluded
+      const isExcludedElement = (el: HTMLElement | null): boolean => {
+        if (!el) return false;
+        
+        // Check data attributes
+        if (
+          el.hasAttribute('data-theme-toggle') ||
+          el.hasAttribute('data-theme-toggle-container') ||
+          el.hasAttribute('data-sticky-nav') ||
+          el.hasAttribute('data-mobile-menu')
+        ) {
+          return true;
+        }
+        
+        // Check if element or any parent has exclusion attributes
+        if (
+          el.closest('[data-theme-toggle]') !== null ||
+          el.closest('[data-theme-toggle-container]') !== null ||
+          el.closest('[data-sticky-nav]') !== null ||
+          el.closest('[data-mobile-menu]') !== null
+        ) {
+          return true;
+        }
+        
+        // Check z-index - if element has z-index > 50, it's above the modal
+        try {
+          const styles = window.getComputedStyle(el);
+          const zIndex = styles.zIndex;
+          if (zIndex && zIndex !== 'auto' && !isNaN(parseInt(zIndex))) {
+            const zIndexNum = parseInt(zIndex, 10);
+            if (zIndexNum > 50) {
+              return true;
+            }
+          }
+        } catch (err) {
+          // Ignore errors
+        }
+        
+        return false;
+      };
+      
+      // Check the element at point first (most accurate)
+      if (isExcludedElement(elementAtPoint)) {
+        return;
+      }
+      
+      // Also check target
+      if (isExcludedElement(target)) {
+        return;
+      }
+      
+      // Check event path
+      if (e.composedPath) {
+        const path = e.composedPath();
+        for (const element of path) {
+          if (element instanceof HTMLElement && isExcludedElement(element)) {
+            return;
+          }
+        }
+      }
+      
+      // Only close if clicking outside the modal
+      if (modalRef.current && !modalRef.current.contains(target)) {
         onClose();
       }
     };
