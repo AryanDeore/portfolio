@@ -12,20 +12,23 @@ interface ChatInputProps {
 }
 
 const suggestionChips = [
-  "Do you know PyTorch?",
-  "Are you familiar with LLMs?",
-  "Any LLM fine-tuning experience?",
+  // "Why did you build an AI that lets people interview your resume?",
+  "What are your strongest technical skills?",
+  "How is this project deployed in production?",
+  "How do you combine data engineering and machine learning?",
+  "Explain the architecture of your RAG system?",
+  "Why did you need schema-aware parent-child chunking?",
+  "How does your retrieval pipeline work end to end?",
+  "How do you monitor and evaluate LLM performance?",
+  "How do you ensure answers stay grounded in real data?",
 ];
 
 export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animationStopped, setAnimationStopped] = useState(false);
-  const marqueeRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number | null>(null);
-  const positionRef = useRef(0);
+  const [clickedPillIndex, setClickedPillIndex] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   // Animated placeholder - only active when idle, not focused, no message, and not stopped
@@ -35,37 +38,6 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   });
   const displayPlaceholder = placeholder || "";
 
-  // Marquee animation effect
-  useEffect(() => {
-    const animate = () => {
-      if (!marqueeRef.current || isPaused) {
-        animationRef.current = requestAnimationFrame(animate);
-        return;
-      }
-
-      const container = marqueeRef.current;
-      const contentWidth = container.scrollWidth / 2; // Divide by 2 since we duplicate content
-
-      // Move position
-      positionRef.current -= 0.5; // Adjust speed here (lower = slower)
-
-      // Reset position when first set is completely off screen
-      if (Math.abs(positionRef.current) >= contentWidth) {
-        positionRef.current = 0;
-      }
-
-      container.style.transform = `translateX(${positionRef.current}px)`;
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [isPaused]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -121,8 +93,13 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
     }
   };
 
-  const handleChipClick = (chipText: string) => {
+  const handleChipClick = (chipText: string, index: number) => {
+    setClickedPillIndex(index);
     setMessage(chipText);
+    // Reset clicked state after animation
+    setTimeout(() => {
+      setClickedPillIndex(null);
+    }, 200);
   };
 
   return (
@@ -177,35 +154,21 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
 
       {/* Suggestion Pills */}
       {!hidePills && (
-        <div className="relative overflow-hidden w-full">
-          <div 
-            ref={marqueeRef}
-            className="flex whitespace-nowrap will-change-transform"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-          >
-            {/* First set of pills */}
-            {suggestionChips.map((chip, index) => (
-              <div key={`hero-pill-1-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
-                <HeroPill
-                  text={chip}
-                  className="hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-            ))}
-            {/* Second identical set for seamless loop */}
-            {suggestionChips.map((chip, index) => (
-              <div key={`hero-pill-2-${index}`} onClick={() => handleChipClick(chip)} className="cursor-pointer flex-shrink-0 mr-4">
-                <HeroPill
-                  text={chip}
-                  className="hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-            ))}
-          </div>
-          {/* Gradient fade-out effects */}
-          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none z-10"></div>
-          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none z-10"></div>
+        <div className="flex flex-wrap gap-x-3 gap-y-0 justify-center">
+          {suggestionChips.map((chip, index) => (
+            <div 
+              key={`hero-pill-${index}`} 
+              onClick={() => handleChipClick(chip, index)} 
+              className="cursor-pointer"
+            >
+              <HeroPill
+                text={chip}
+                className={`hover:scale-105 transition-transform duration-200 ${
+                  clickedPillIndex === index ? 'scale-95 opacity-80' : ''
+                }`}
+              />
+            </div>
+          ))}
         </div>
       )}
     </div>

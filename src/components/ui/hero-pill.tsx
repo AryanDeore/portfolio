@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { Pill, PillStatus } from "@/components/ui/pill"
 
 interface HeroPillProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode
@@ -26,14 +27,17 @@ export function HeroPill({
       )} 
       {...props}
     >
-      <p className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-background px-3 py-1 text-sm font-medium text-foreground/90 dark:text-foreground/80 shadow-sm shadow-black/[.12] dark:bg-accent hover:bg-accent/80 transition-colors">
+      <Pill
+        variant="outline"
+        className="inline-flex items-center justify-center whitespace-nowrap bg-background px-4 py-1.5 text-foreground/90 dark:text-foreground/80 shadow-sm shadow-black/[.12] dark:bg-accent hover:bg-accent/80 transition-colors border-0"
+      >
         {icon && (
-          <span className="mr-2 flex shrink-0 border-r border-border pr-2">
+          <PillStatus className="shrink-0 border-border">
             {icon}
-          </span>
+          </PillStatus>
         )}
         {text}
-      </p>
+      </Pill>
     </div>
   )
 }
