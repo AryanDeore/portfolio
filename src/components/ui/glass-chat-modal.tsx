@@ -388,7 +388,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
         </div>
 
         {/* Input */}
-        <div className="flex-shrink-0 p-6">
+        <div className="flex-shrink-0 p-6 pr-20 md:pr-6">
           <div className="w-full max-w-2xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
               <div className="relative flex items-start">
