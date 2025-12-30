@@ -91,7 +91,7 @@ export function StarterQuestionPills({
     onQuestionClick(question);
   };
 
-  const getCategoryStyles = (category: QuestionCategory) => {
+  const getCategoryStyles = (_category: QuestionCategory) => {
     // Glassmorphism style with semi-transparent background, subtle border, and backdrop blur
     return {
       className: "bg-[rgba(255,255,255,0.05)] dark:bg-[rgba(255,255,255,0.05)] border border-white/20 dark:border-white/20 backdrop-blur-[10px] hover:bg-[rgba(255,255,255,0.1)] dark:hover:bg-[rgba(255,255,255,0.1)] hover:border-white/40 dark:hover:border-white/40 hover:shadow-[0_0_8px_rgba(255,255,255,0.2)] dark:hover:shadow-[0_0_8px_rgba(255,255,255,0.2)] text-gray-100 dark:text-gray-100 cursor-pointer transition-all duration-200",

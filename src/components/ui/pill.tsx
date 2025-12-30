@@ -13,7 +13,7 @@ export type PillProps = BadgeProps & {
 
 export const Pill = ({
   variant = 'secondary',
-  themed = false,
+  themed: _themed = false,
   className,
   ...props
 }: PillProps) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, Send, Trash2, Copy, Check, Github, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as Tooltip from "@radix-ui/react-tooltip";
@@ -237,10 +237,10 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                             ul: ({ children }) => {
                               // Check if all children are link chips - if so, render them in a flex container
                               const childrenArray = Array.isArray(children) ? children : [children];
-                              const allAreLinks = childrenArray.every((child: any) => {
-                                const childStr = String(child?.props?.children || child);
+                              const allAreLinks = childrenArray.every((child: React.ReactNode) => {
+                                const childStr = String((child as React.ReactElement)?.props?.children || child);
                                 return childStr.includes('Live:') || childStr.includes('GitHub:') || 
-                                       (child?.props?.children && typeof child.props.children === 'object');
+                                       ((child as React.ReactElement)?.props?.children && typeof (child as React.ReactElement).props.children === 'object');
                               });
                               
                               if (allAreLinks && childrenArray.length > 0) {
@@ -251,11 +251,11 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                             ol: ({ children }) => <ol className="list-decimal list-outside mb-3 space-y-1 ml-4">{children}</ol>,
                             li: ({ children }) => {
                               // Extract text content to check for link patterns
-                              const extractText = (node: any): string => {
+                              const extractText = (node: React.ReactNode): string => {
                                 if (typeof node === 'string') return node;
                                 if (typeof node === 'number') return String(node);
                                 if (Array.isArray(node)) return node.map(extractText).join('');
-                                if (node?.props?.children) return extractText(node.props.children);
+                                if ((node as React.ReactElement)?.props?.children) return extractText((node as React.ReactElement).props.children);
                                 return '';
                               };
                               
@@ -286,11 +286,11 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                               if (!href) return <a>{children}</a>;
                               
                               // Extract text content from children (handles React elements)
-                              const extractText = (node: any): string => {
+                              const extractText = (node: React.ReactNode): string => {
                                 if (typeof node === 'string') return node;
                                 if (typeof node === 'number') return String(node);
                                 if (Array.isArray(node)) return node.map(extractText).join('');
-                                if (node?.props?.children) return extractText(node.props.children);
+                                if ((node as React.ReactElement)?.props?.children) return extractText((node as React.ReactElement).props.children);
                                 return '';
                               };
                               
