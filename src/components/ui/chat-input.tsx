@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { Send, Shuffle } from "lucide-react";
 import { useAnimatedPlaceholder } from "@/lib/use-animated-placeholder";
 import { HeroPill } from "@/components/ui/hero-pill";
@@ -10,6 +10,11 @@ interface ChatInputProps {
   onSubmit?: (message: string) => void;
   placeholder?: string;
   hidePills?: boolean;
+}
+
+export interface ChatInputRef {
+  focus: () => void;
+  select: () => void;
 }
 
 const allQuestions = [
@@ -38,7 +43,8 @@ function getRandomQuestions(questions: string[], count: number = 4): string[] {
   return shuffled.slice(0, count);
 }
 
-export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInputProps) {
+export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(
+  ({ onSubmit, placeholder, hidePills = false }, ref) => {
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
@@ -48,6 +54,16 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   const [firstPillClicked, setFirstPillClicked] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Expose focus and select methods via ref
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      textareaRef.current?.focus();
+    },
+    select: () => {
+      textareaRef.current?.select();
+    },
+  }));
   
   // Animated placeholder - only active when idle, not focused, no message, and not stopped
   const shouldAnimatePlaceholder = !placeholder && !isFocused && !message && !animationStopped;
@@ -249,4 +265,6 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
       )}
     </div>
   );
-}
+});
+
+ChatInput.displayName = "ChatInput";

@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useTheme } from "@/components/theme-provider";
+import { useChatModal } from "@/components/chat-context";
 import { Sun, Moon, Menu, X } from "lucide-react";
 
 export const StickyNav = ({
@@ -24,6 +25,7 @@ export const StickyNav = ({
 }) => {
   const { scrollYProgress } = useScroll();
   const { theme, toggleTheme } = useTheme();
+  const { focusHeroInput } = useChatModal();
 
   const [visible, setVisible] = useState(true); // Always start visible
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -139,26 +141,53 @@ export const StickyNav = ({
             className
           )}
         >
-          {navItems.map((navItem, idx: number) => (
-            <Link
-              key={`link=${idx}`}
-              href={navItem.link}
-              className={cn(
-                "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 rounded-md",
-                // Responsive padding
-                "px-1 py-0", // Mobile: compact padding
-                "sm:px-2 sm:py-0" // Desktop: normal padding
-              )}
-            >
-              {navItem.name ? (
-                <>
-                  <span className="hidden sm:block text-lg">{navItem.name}</span>
-                </>
-              ) : (
-                <span className="block">{navItem.icon}</span>
-              )}
-            </Link>
-          ))}
+          {navItems.map((navItem, idx: number) => {
+            const isAskAI = navItem.name === "Ask AI";
+            
+            if (isAskAI) {
+              return (
+                <button
+                  key={`link=${idx}`}
+                  onClick={focusHeroInput}
+                  className={cn(
+                    "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 rounded-md",
+                    // Responsive padding
+                    "px-1 py-0", // Mobile: compact padding
+                    "sm:px-2 sm:py-0" // Desktop: normal padding
+                  )}
+                >
+                  {navItem.name ? (
+                    <>
+                      <span className="hidden sm:block text-lg">{navItem.name}</span>
+                    </>
+                  ) : (
+                    <span className="block">{navItem.icon}</span>
+                  )}
+                </button>
+              );
+            }
+            
+            return (
+              <Link
+                key={`link=${idx}`}
+                href={navItem.link}
+                className={cn(
+                  "relative text-muted-foreground items-center flex space-x-1 hover:text-foreground transition-colors duration-200 rounded-md",
+                  // Responsive padding
+                  "px-1 py-0", // Mobile: compact padding
+                  "sm:px-2 sm:py-0" // Desktop: normal padding
+                )}
+              >
+                {navItem.name ? (
+                  <>
+                    <span className="hidden sm:block text-lg">{navItem.name}</span>
+                  </>
+                ) : (
+                  <span className="block">{navItem.icon}</span>
+                )}
+              </Link>
+            );
+          })}
         </motion.div>
       </AnimatePresence>
 
@@ -176,19 +205,41 @@ export const StickyNav = ({
             <div className="p-4 space-y-2">
               {navItems
                 .filter(item => item.name) // Only show named items in mobile menu
-                .map((navItem, idx) => (
-                  <Link
-                    key={`mobile-link=${idx}`}
-                    href={navItem.link}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors duration-200"
-                  >
-                    <div className="flex items-center space-x-3">
-                      {navItem.icon && <span>{navItem.icon}</span>}
-                      <span className="text-lg">{navItem.name}</span>
-                    </div>
-                  </Link>
-                ))}
+                .map((navItem, idx) => {
+                  const isAskAI = navItem.name === "Ask AI";
+                  
+                  if (isAskAI) {
+                    return (
+                      <button
+                        key={`mobile-link=${idx}`}
+                        onClick={() => {
+                          focusHeroInput();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="block w-full text-left px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors duration-200"
+                      >
+                        <div className="flex items-center space-x-3">
+                          {navItem.icon && <span>{navItem.icon}</span>}
+                          <span className="text-lg">{navItem.name}</span>
+                        </div>
+                      </button>
+                    );
+                  }
+                  
+                  return (
+                    <Link
+                      key={`mobile-link=${idx}`}
+                      href={navItem.link}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors duration-200"
+                    >
+                      <div className="flex items-center space-x-3">
+                        {navItem.icon && <span>{navItem.icon}</span>}
+                        <span className="text-lg">{navItem.name}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
             </div>
           </motion.div>
         )}

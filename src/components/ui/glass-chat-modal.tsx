@@ -128,13 +128,13 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative w-full max-w-[1280px] h-[80vh] bg-background/80 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300 flex flex-col overflow-hidden"
+        className="relative w-full max-w-[1280px] h-[80vh] bg-background/80 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl animate-in fade-in-0 zoom-in-95 duration-300 flex flex-col overflow-hidden font-[family-name:var(--font-geist-sans)]"
         style={{ width: "min(90vw, 1280px)" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border/30">
           <div>
-            <p className="text-lg font-medium text-foreground">Ask me about my experience and projects</p>
+            <p className="text-base font-medium text-foreground">Ask me about my experience and projects</p>
           </div>
           <div className="flex items-center gap-2">
             <Tooltip.Provider delayDuration={100}>
@@ -175,12 +175,13 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-[680px] mx-auto w-full space-y-4">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
               <div className="text-4xl mb-4">👋</div>
-              <h3 className="text-xl font-semibold text-foreground">Ask me anything!</h3>
-              <p className="text-muted-foreground max-w-md">
+              <h3 className="text-lg font-semibold text-foreground leading-[1.5]">Ask me anything!</h3>
+              <p className="text-base text-muted-foreground max-w-md leading-[1.5]">
                 I can tell you about my projects, experience, skills, and more.
               </p>
               <div className="flex flex-wrap gap-2 justify-center mt-4">
@@ -208,7 +209,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                     </Avatar>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 relative ${
+                    className={`${message.sender === "user" ? "max-w-[70%]" : "max-w-[90%]"} rounded-2xl px-4 py-3 relative ${
                       message.sender === "user"
                         ? "bg-primary text-primary-foreground"
                         : ""
@@ -229,10 +230,10 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                     )}
                     
                     {message.sender === "assistant" ? (
-                      <div className="text-lg leading-normal markdown-content prose prose-lg dark:prose-invert max-w-none">
+                      <div className="text-base leading-[1.5] markdown-content prose dark:prose-invert max-w-none">
                         <ReactMarkdown 
                           components={{
-                            p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
+                            p: ({ children }) => <p className="mb-1.5 last:mb-0 leading-[1.5]">{children}</p>,
                             ul: ({ children }) => {
                               // Check if all children are link chips - if so, render them in a flex container
                               const childrenArray = Array.isArray(children) ? children : [children];
@@ -245,9 +246,9 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                               if (allAreLinks && childrenArray.length > 0) {
                                 return <div className="mb-3 flex flex-wrap gap-2">{children}</div>;
                               }
-                              return <ul className="mb-3 space-y-2">{children}</ul>;
+                              return <ul className="list-disc list-outside mb-3 space-y-1 ml-4">{children}</ul>;
                             },
-                            ol: ({ children }) => <ol className="mb-3 space-y-2">{children}</ol>,
+                            ol: ({ children }) => <ol className="list-decimal list-outside mb-3 space-y-1 ml-4">{children}</ol>,
                             li: ({ children }) => {
                               // Extract text content to check for link patterns
                               const extractText = (node: any): string => {
@@ -265,19 +266,19 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                               if (hasLinkPattern) {
                                 return <div className="inline-block">{children}</div>;
                               }
-                              return <li className="leading-normal ml-4 list-disc">{children}</li>;
+                              return <li className="leading-[1.5]">{children}</li>;
                             },
                             strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
                             em: ({ children }) => <em className="italic">{children}</em>,
-                            h1: ({ children }) => <h1 className="text-2xl font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
-                            h2: ({ children }) => <h2 className="text-xl font-bold mb-2 mt-3 first:mt-0">{children}</h2>,
-                            h3: ({ children }) => <h3 className="text-lg font-semibold mb-2 mt-3 first:mt-0">{children}</h3>,
+                            h1: ({ children }) => <h1 className="text-xl font-bold mb-3 mt-4 first:mt-0 leading-[1.5]">{children}</h1>,
+                            h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-3 first:mt-0 leading-[1.5]">{children}</h2>,
+                            h3: ({ children }) => <h3 className="text-base font-semibold mb-2 mt-3 first:mt-0 leading-[1.5]">{children}</h3>,
                             code: ({ children, className }) => {
                               const isInline = !className;
                               return isInline ? (
-                                <code className="px-1.5 py-0.5 bg-muted rounded text-base font-mono">{children}</code>
+                                <code className="px-1.5 py-0.5 bg-muted rounded text-base font-mono leading-[1.5]">{children}</code>
                               ) : (
-                                <code className="block p-3 bg-muted rounded-lg text-base font-mono overflow-x-auto">{children}</code>
+                                <code className="block p-3 bg-muted rounded-lg text-base font-mono overflow-x-auto leading-[1.5]">{children}</code>
                               );
                             },
                             pre: ({ children }) => <pre className="mb-3">{children}</pre>,
@@ -345,7 +346,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                               );
                             },
                             blockquote: ({ children }) => (
-                              <blockquote className="border-l-4 border-primary/30 pl-4 italic my-3 text-muted-foreground">
+                              <blockquote className="border-l-4 border-primary/30 pl-4 italic my-3 text-muted-foreground text-base leading-[1.5]">
                                 {children}
                               </blockquote>
                             ),
@@ -355,7 +356,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                         </ReactMarkdown>
                       </div>
                     ) : (
-                      <p className="text-sm leading-relaxed">{message.content}</p>
+                      <p className="text-base leading-[1.5]">{message.content}</p>
                     )}
                   </div>
                 </div>
@@ -380,6 +381,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
           )}
           
           <div ref={messagesEndRef} />
+          </div>
         </div>
 
         {/* Input */}
@@ -395,7 +397,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                   placeholder="Ask me anything..."
                   rows={1}
                   style={{ resize: 'none' }}
-                  className="w-full px-6 py-5 pr-14 text-base bg-background/80 backdrop-blur-sm border border-border/70 dark:border-border rounded-3xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 dark:focus:border-primary/70 transition-all duration-200 placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-auto"
+                  className="w-full px-6 py-5 pr-14 text-base leading-[1.5] bg-background/80 backdrop-blur-sm border border-border/70 dark:border-border rounded-3xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/50 dark:focus:border-primary/70 transition-all duration-200 placeholder:text-muted-foreground/60 min-h-[62px] max-h-[200px] overflow-y-auto"
                 />
                 <button
                   type="submit"

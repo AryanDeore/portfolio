@@ -3,10 +3,11 @@
 import { useEffect, useState, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { AnimatedBackground } from "@/components/ui/animated-background";
-import { ChatInput } from "@/components/ui/chat-input";
+import { ChatInput, ChatInputRef } from "@/components/ui/chat-input";
 import { MaxWidthWrapper } from "@/components/layout/max-width-wrapper";
 import { GlassChatModal } from "@/components/ui/glass-chat-modal";
 import { useChat } from "@/lib/use-chat";
+import { useChatModal } from "@/components/chat-context";
 
 interface Message {
   id: string;
@@ -18,11 +19,19 @@ interface Message {
 export function HeroSection() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showStickyInput, setShowStickyInput] = useState(false);
-  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
   const heroInputRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<ChatInputRef>(null);
+  
+  // Use the chat modal context
+  const { isChatModalOpen, closeChatModal, openChatModal, registerHeroInputRef } = useChatModal();
   
   // Use the useChat hook to handle backend communication
   const { messages: chatMessages, send, reset, isLoading } = useChat();
+
+  // Register the chat input ref with the context
+  useEffect(() => {
+    registerHeroInputRef(chatInputRef);
+  }, [registerHeroInputRef]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,7 +68,7 @@ export function HeroSection() {
   const handleChatSubmit = async (message: string) => {
     // Open modal when first message is sent
     if (!isChatModalOpen) {
-      setIsChatModalOpen(true);
+      openChatModal();
     }
     
     // Use the send function from useChat hook to call the backend
@@ -67,7 +76,7 @@ export function HeroSection() {
   };
 
   const handleCloseChatModal = () => {
-    setIsChatModalOpen(false);
+    closeChatModal();
   };
 
   const handleClearChat = () => {
@@ -103,8 +112,8 @@ export function HeroSection() {
           </div>
 
           {/* Chat Input */}
-          <div ref={heroInputRef} className="pt-8">
-            <ChatInput onSubmit={handleChatSubmit} />
+          <div ref={heroInputRef} data-hero-input className="pt-8">
+            <ChatInput ref={chatInputRef} onSubmit={handleChatSubmit} />
           </div>
         </div>
 
