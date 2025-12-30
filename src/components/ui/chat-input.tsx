@@ -195,6 +195,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
               onClick={handleShuffle}
               className="flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 p-2 rounded-md hover:bg-accent/50"
               aria-label="Shuffle questions"
+              title="Shuffle questions"
             >
               <Shuffle className="h-4 w-4" />
             </button>
