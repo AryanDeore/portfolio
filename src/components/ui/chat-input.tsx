@@ -45,6 +45,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   const [animationStopped, setAnimationStopped] = useState(false);
   const [clickedPillIndex, setClickedPillIndex] = useState<number | null>(null);
   const [displayedQuestions, setDisplayedQuestions] = useState<string[]>(defaultQuestions);
+  const [firstPillClicked, setFirstPillClicked] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   // Animated placeholder - only active when idle, not focused, no message, and not stopped
@@ -116,6 +117,10 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   const handleChipClick = (chipText: string, index: number) => {
     setClickedPillIndex(index);
     setMessage(chipText);
+    // Stop highlighting first pill if it was clicked
+    if (index === 0) {
+      setFirstPillClicked(true);
+    }
     // Focus the textarea so user can immediately press Enter/Cmd+Enter
     setTimeout(() => {
       textareaRef.current?.focus();
@@ -128,6 +133,8 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
 
   const handleShuffle = () => {
     setDisplayedQuestions(getRandomQuestions(allQuestions, 4));
+    // Reset first pill highlight when shuffling
+    setFirstPillClicked(false);
   };
 
   return (
@@ -193,6 +200,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
                 <HeroPill
                   text={chip}
                   isPressed={clickedPillIndex === index}
+                  isHighlighted={index === 0 && !firstPillClicked}
                   className="!mb-0 hover:scale-105"
                 />
               </div>

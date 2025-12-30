@@ -10,6 +10,10 @@ interface HeroPillProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   animate?: boolean
   isPressed?: boolean
+  /**
+   * Whether to show subtle glow and pulse animation
+   */
+  isHighlighted?: boolean
 }
 
 export function HeroPill({ 
@@ -18,6 +22,7 @@ export function HeroPill({
   className,
   animate = true,
   isPressed = false,
+  isHighlighted = false,
   ...props 
 }: HeroPillProps) {
   return (
@@ -40,7 +45,8 @@ export function HeroPill({
           "backdrop-blur-[10px]",
           isPressed 
             ? "scale-[0.96] !bg-gray-200/70 dark:!bg-[rgba(255,255,255,0.12)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]"
-            : "hover:!border-gray-300/80 dark:hover:!border-white/40"
+            : "hover:!border-gray-300/80 dark:hover:!border-white/40",
+          isHighlighted && "pill-glow-pulse !border-white/50 dark:!border-white/50"
         )}
       >
         {icon && (
