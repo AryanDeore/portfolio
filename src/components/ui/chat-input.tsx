@@ -154,7 +154,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
 
       {/* Suggestion Pills */}
       {!hidePills && (
-        <div className="flex flex-wrap gap-x-3 gap-y-0 justify-center">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 justify-center">
           {suggestionChips.map((chip, index) => (
             <div 
               key={`hero-pill-${index}`} 
