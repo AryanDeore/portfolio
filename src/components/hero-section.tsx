@@ -131,7 +131,7 @@ export function HeroSection() {
       )}
 
       {/* Sticky Chat Input - Fixed at bottom when scrolled */}
-      <div className={`fixed bottom-4 left-4 right-4 z-30 transition-all duration-300 ease-in-out transform ${
+      <div className={`fixed bottom-4 left-4 right-20 md:right-4 z-30 transition-all duration-300 ease-in-out transform ${
         showStickyInput ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
       }`}>
         <MaxWidthWrapper maxWidth="2xl">

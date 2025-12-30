@@ -561,3 +561,8 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground));
 }
+
+/* Next.js portal positioning */
+nextjs-portal {
+  left: 1px;
+}

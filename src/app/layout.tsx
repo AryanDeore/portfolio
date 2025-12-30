@@ -5,6 +5,7 @@ import { StickyNav } from "@/components/ui/sticky-navbar";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ChatProvider } from "@/components/chat-context";
+import { ChatButton } from "@/components/ui/chat-button";
 import { Home as HomeIcon, Briefcase } from "lucide-react";
 import Image from "next/image";
 
@@ -81,6 +82,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <ChatButton />
           </ChatProvider>
         </ThemeProvider>
       </body>
