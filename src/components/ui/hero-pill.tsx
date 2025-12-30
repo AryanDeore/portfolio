@@ -9,6 +9,7 @@ interface HeroPillProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default true
    */
   animate?: boolean
+  isPressed?: boolean
 }
 
 export function HeroPill({ 
@@ -16,6 +17,7 @@ export function HeroPill({
   text, 
   className,
   animate = true,
+  isPressed = false,
   ...props 
 }: HeroPillProps) {
   return (
@@ -29,7 +31,12 @@ export function HeroPill({
     >
       <Pill
         variant="outline"
-        className="inline-flex items-center justify-center bg-background px-3 py-1.5 text-foreground/90 dark:text-foreground/80 shadow-sm shadow-black/[.12] dark:bg-accent hover:bg-accent/80 transition-colors border-0 whitespace-normal break-words"
+        className={cn(
+          "inline-flex items-center justify-center px-3 py-1.5 text-foreground/90 dark:text-foreground/80 border-0 whitespace-normal break-words transition-all duration-200",
+          isPressed 
+            ? "scale-[0.96] shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] bg-accent/60 dark:bg-accent/70"
+            : "bg-background shadow-sm shadow-black/[.12] dark:bg-accent hover:bg-accent/80"
+        )}
       >
         {icon && (
           <PillStatus className="shrink-0 border-border">

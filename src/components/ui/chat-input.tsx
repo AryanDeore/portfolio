@@ -99,7 +99,11 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // Submit on Enter (without Shift) or Cmd/Ctrl+Enter
+    const isEnter = e.key === 'Enter';
+    const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+    
+    if (isEnter && (!e.shiftKey || isCmdOrCtrl)) {
       e.preventDefault();
       if (message.trim() && onSubmit) {
         onSubmit(message.trim());
@@ -111,6 +115,10 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   const handleChipClick = (chipText: string, index: number) => {
     setClickedPillIndex(index);
     setMessage(chipText);
+    // Focus the textarea so user can immediately press Enter/Cmd+Enter
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 0);
     // Reset clicked state after animation
     setTimeout(() => {
       setClickedPillIndex(null);
@@ -183,9 +191,8 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
               >
                 <HeroPill
                   text={chip}
-                  className={`!mb-0 hover:scale-105 transition-transform duration-200 ${
-                    clickedPillIndex === index ? 'scale-95 opacity-80' : ''
-                  }`}
+                  isPressed={clickedPillIndex === index}
+                  className="!mb-0 hover:scale-105"
                 />
               </div>
             ))}
