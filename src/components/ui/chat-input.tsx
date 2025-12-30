@@ -46,6 +46,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   const [clickedPillIndex, setClickedPillIndex] = useState<number | null>(null);
   const [displayedQuestions, setDisplayedQuestions] = useState<string[]>(defaultQuestions);
   const [firstPillClicked, setFirstPillClicked] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   // Animated placeholder - only active when idle, not focused, no message, and not stopped
@@ -135,6 +136,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
     setDisplayedQuestions(getRandomQuestions(allQuestions, 4));
     // Reset first pill highlight when shuffling
     setFirstPillClicked(false);
+    // Don't reset hasInteracted - once user has interacted, glow stays off
   };
 
   return (
@@ -157,6 +159,8 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
               setIsFocused(true);
               // Stop animation when user focuses
               setAnimationStopped(true);
+              // Permanently stop glow after interaction
+              setHasInteracted(true);
             }}
             onBlur={() => setIsFocused(false)}
             placeholder={displayPlaceholder}
@@ -191,20 +195,31 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
       {!hidePills && (
         <div className="space-y-3">
           <div className="flex flex-wrap gap-3 justify-center max-w-2xl mx-auto px-4">
-            {displayedQuestions.map((chip, index) => (
-              <div 
-                key={`hero-pill-${chip}-${index}`} 
-                onClick={() => handleChipClick(chip, index)} 
-                className="cursor-pointer"
-              >
-                <HeroPill
-                  text={chip}
-                  isPressed={clickedPillIndex === index}
-                  isHighlighted={index === 0 && !firstPillClicked}
-                  className="!mb-0 hover:scale-105"
-                />
-              </div>
-            ))}
+            {displayedQuestions.map((chip, index) => {
+              const shouldHighlight = 
+                index === 0 && 
+                !firstPillClicked && 
+                !hasInteracted;
+              
+              return (
+                <div 
+                  key={`hero-pill-${chip}-${index}`} 
+                  onClick={() => handleChipClick(chip, index)} 
+                  onMouseEnter={() => {
+                    // Permanently stop glow after hovering any pill
+                    setHasInteracted(true);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <HeroPill
+                    text={chip}
+                    isPressed={clickedPillIndex === index}
+                    isHighlighted={shouldHighlight}
+                    className="!mb-0 hover:scale-105"
+                  />
+                </div>
+              );
+            })}
           </div>
           <div className="flex justify-center">
             <Tooltip.Provider delayDuration={100}>
