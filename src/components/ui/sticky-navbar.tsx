@@ -26,6 +26,7 @@ export const StickyNav = ({
   const { scrollYProgress } = useScroll();
   const { theme, toggleTheme } = useTheme();
   const { focusHeroInput } = useChatModal();
+  const themeToggleRef = React.useRef<HTMLButtonElement>(null);
 
   const [visible, setVisible] = useState(true); // Always start visible
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -61,31 +62,33 @@ export const StickyNav = ({
     };
   }, [isMobileMenuOpen]);
 
-  // Close mobile menu when clicking outside or pressing escape
+  // Prevent theme toggle clicks from closing chat modal
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (isMobileMenuOpen && !target.closest('[data-mobile-menu]')) {
-        setIsMobileMenuOpen(false);
+    const handleThemeToggleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+      
+      // Check if click is on theme toggle button or any of its children
+      const isThemeToggleClick = 
+        themeToggleRef.current?.contains(target) ||
+        target.closest('[data-theme-toggle]') !== null ||
+        target.closest('[data-theme-toggle-container]') !== null ||
+        target.hasAttribute('data-theme-toggle');
+      
+      if (isThemeToggleClick) {
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        e.preventDefault();
       }
     };
 
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    if (isMobileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEscapeKey);
-    }
+    // Use capture phase to intercept before modal handler
+    document.addEventListener('mousedown', handleThemeToggleClick, true);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener('mousedown', handleThemeToggleClick, true);
     };
-  }, [isMobileMenuOpen]);
+  }, []);
 
   return (
     <>
@@ -134,6 +137,7 @@ export const StickyNav = ({
           transition={{
             duration: 0.2,
           }}
+          data-sticky-nav
           className={cn(
             "flex fixed top-5 inset-x-0 mx-auto bg-background/95 backdrop-blur-sm rounded-full shadow-lg z-[5000] px-8 py-0 items-center justify-center space-x-6",
             // Ensure navbar doesn't stretch too wide on ultra-wide screens - use max-w-fit for content-based width with a reasonable maximum
@@ -259,12 +263,18 @@ export const StickyNav = ({
           transition={{
             duration: 0.2,
           }}
+          data-theme-toggle-container
           className="fixed top-7 left-0 right-0 z-[5000] pointer-events-none"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end rounded-md">
             <div className="pointer-events-auto">
               <button
-                onClick={toggleTheme}
+                ref={themeToggleRef}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleTheme();
+                }}
+                data-theme-toggle
                 className="p-2 rounded-md hover:bg-background/20 transition-colors duration-200 text-muted-foreground hover:text-foreground"
                 aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
               >
