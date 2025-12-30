@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Send } from "lucide-react";
+import { Send, Shuffle } from "lucide-react";
 import { useAnimatedPlaceholder } from "@/lib/use-animated-placeholder";
 import { HeroPill } from "@/components/ui/hero-pill";
 
@@ -11,17 +11,31 @@ interface ChatInputProps {
   hidePills?: boolean;
 }
 
-const suggestionChips = [
-  // "Why did you build an AI that lets people interview your resume?",
-  "What are your strongest technical skills?",
-  "How is this project deployed in production?",
-  "How do you combine data engineering and machine learning?",
-  "Explain the architecture of your RAG system?",
-  "Why did you need schema-aware parent-child chunking?",
-  "How does your retrieval pipeline work end to end?",
-  "How do you monitor and evaluate LLM performance?",
-  "How do you ensure answers stay grounded in real data?",
+const allQuestions = [
+  "Why did you build an AI that lets people interview your resume",
+  "What are your strongest technical skills",
+  "How do you combine data engineering and machine learning",
+  "Can you explain the architecture of your RAG system",
+  "Why did you need schema-aware parent-child chunking",
+  "How does your retrieval pipeline work end to end",
+  "How do you monitor and evaluate LLM performance",
+  "How is this project deployed in production",
+  "How do you ensure answers stay grounded in real data",
 ];
+
+// Default set of questions that display nicely in two rows
+const defaultQuestions = [
+  "What are your strongest technical skills",
+  "Can you explain the architecture of your RAG system",
+  "How does your retrieval pipeline work end to end",
+  "How do you monitor and evaluate LLM performance",
+];
+
+// Function to randomly select 4 questions from the full list
+function getRandomQuestions(questions: string[], count: number = 4): string[] {
+  const shuffled = [...questions].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
 
 export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInputProps) {
   const [message, setMessage] = useState("");
@@ -29,6 +43,7 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animationStopped, setAnimationStopped] = useState(false);
   const [clickedPillIndex, setClickedPillIndex] = useState<number | null>(null);
+  const [displayedQuestions, setDisplayedQuestions] = useState<string[]>(defaultQuestions);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   // Animated placeholder - only active when idle, not focused, no message, and not stopped
@@ -102,6 +117,10 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
     }, 200);
   };
 
+  const handleShuffle = () => {
+    setDisplayedQuestions(getRandomQuestions(allQuestions, 4));
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4">
       {/* Chat Input */}
@@ -154,21 +173,32 @@ export function ChatInput({ onSubmit, placeholder, hidePills = false }: ChatInpu
 
       {/* Suggestion Pills */}
       {!hidePills && (
-        <div className="flex flex-wrap gap-x-3 gap-y-1 justify-center">
-          {suggestionChips.map((chip, index) => (
-            <div 
-              key={`hero-pill-${index}`} 
-              onClick={() => handleChipClick(chip, index)} 
-              className="cursor-pointer"
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-3 justify-center max-w-2xl mx-auto px-4">
+            {displayedQuestions.map((chip, index) => (
+              <div 
+                key={`hero-pill-${chip}-${index}`} 
+                onClick={() => handleChipClick(chip, index)} 
+                className="cursor-pointer"
+              >
+                <HeroPill
+                  text={chip}
+                  className={`!mb-0 hover:scale-105 transition-transform duration-200 ${
+                    clickedPillIndex === index ? 'scale-95 opacity-80' : ''
+                  }`}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center">
+            <button
+              onClick={handleShuffle}
+              className="flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 p-2 rounded-md hover:bg-accent/50"
+              aria-label="Shuffle questions"
             >
-              <HeroPill
-                text={chip}
-                className={`hover:scale-105 transition-transform duration-200 ${
-                  clickedPillIndex === index ? 'scale-95 opacity-80' : ''
-                }`}
-              />
-            </div>
-          ))}
+              <Shuffle className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>
