@@ -5,6 +5,7 @@ import { X, Send, Trash2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import ReactMarkdown from "react-markdown";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 interface Message {
   id: string;
@@ -198,13 +199,18 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"} group`}
+                  className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"} group items-start gap-3`}
                 >
+                  {message.sender === "assistant" && message.content && (
+                    <Avatar className="h-8 w-8 shrink-0 mt-1">
+                      <AvatarImage src="/website-icon.svg" alt="Aryan" className="rotate-90" />
+                    </Avatar>
+                  )}
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-3 relative ${
                       message.sender === "user"
                         ? "bg-primary text-primary-foreground"
-                        : "bg-muted/50 backdrop-blur-sm border border-border/30"
+                        : ""
                     }`}
                   >
                     {message.sender === "assistant" && message.content && (
@@ -265,10 +271,13 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                 </div>
               ))}
               
-              {/* Typing indicator */}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-muted/50 backdrop-blur-sm border border-border/30 rounded-2xl px-4 py-3">
+              {/* Typing indicator - only show if loading and last message is not an assistant with content */}
+              {isLoading && (messages.length === 0 || messages[messages.length - 1]?.sender !== "assistant" || !messages[messages.length - 1]?.content) && (
+                <div className="flex justify-start items-start gap-3">
+                  <Avatar className="h-8 w-8 shrink-0 mt-1">
+                    <AvatarImage src="/website-icon.svg" alt="Aryan" className="rotate-90" />
+                  </Avatar>
+                  <div className="rounded-2xl px-4 py-3">
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                       <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
