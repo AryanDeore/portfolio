@@ -238,9 +238,10 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                               // Check if all children are link chips - if so, render them in a flex container
                               const childrenArray = Array.isArray(children) ? children : [children];
                               const allAreLinks = childrenArray.every((child: React.ReactNode) => {
-                                const childStr = String((child as React.ReactElement)?.props?.children || child);
+                                const reactElement = child as React.ReactElement<{ children?: React.ReactNode }>;
+                                const childStr = String(reactElement?.props?.children || child);
                                 return childStr.includes('Live:') || childStr.includes('GitHub:') || 
-                                       ((child as React.ReactElement)?.props?.children && typeof (child as React.ReactElement).props.children === 'object');
+                                       (reactElement?.props?.children && typeof reactElement.props.children === 'object');
                               });
                               
                               if (allAreLinks && childrenArray.length > 0) {
@@ -255,7 +256,8 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                                 if (typeof node === 'string') return node;
                                 if (typeof node === 'number') return String(node);
                                 if (Array.isArray(node)) return node.map(extractText).join('');
-                                if ((node as React.ReactElement)?.props?.children) return extractText((node as React.ReactElement).props.children);
+                                const reactElement = node as React.ReactElement<{ children?: React.ReactNode }>;
+                                if (reactElement?.props?.children) return extractText(reactElement.props.children);
                                 return '';
                               };
                               
@@ -290,7 +292,8 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                                 if (typeof node === 'string') return node;
                                 if (typeof node === 'number') return String(node);
                                 if (Array.isArray(node)) return node.map(extractText).join('');
-                                if ((node as React.ReactElement)?.props?.children) return extractText((node as React.ReactElement).props.children);
+                                const reactElement = node as React.ReactElement<{ children?: React.ReactNode }>;
+                                if (reactElement?.props?.children) return extractText(reactElement.props.children);
                                 return '';
                               };
                               

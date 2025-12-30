@@ -8,14 +8,14 @@ interface ChatContextType {
   closeChatModal: () => void;
   isChatModalOpen: boolean;
   focusHeroInput: () => void;
-  registerHeroInputRef: (ref: React.RefObject<ChatInputRef>) => void;
+  registerHeroInputRef: (ref: React.RefObject<ChatInputRef | null>) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [isChatModalOpen, setIsChatModalOpen] = useState(false);
-  const heroInputRef = useRef<React.RefObject<ChatInputRef> | null>(null);
+  const heroInputRef = useRef<React.RefObject<ChatInputRef | null> | null>(null);
 
   const openChatModal = useCallback(() => {
     setIsChatModalOpen(true);
@@ -25,7 +25,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setIsChatModalOpen(false);
   }, []);
 
-  const registerHeroInputRef = useCallback((ref: React.RefObject<ChatInputRef>) => {
+  const registerHeroInputRef = useCallback((ref: React.RefObject<ChatInputRef | null>) => {
     heroInputRef.current = ref;
   }, []);
 
