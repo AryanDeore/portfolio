@@ -4,6 +4,7 @@ import "./globals.css";
 import { StickyNav } from "@/components/ui/sticky-navbar";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ChatProvider } from "@/components/chat-context";
 import { Home as HomeIcon, Briefcase } from "lucide-react";
 import Image from "next/image";
 
@@ -74,11 +75,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          <StickyNav navItems={navItems} />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
+          <ChatProvider>
+            <StickyNav navItems={navItems} />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </ChatProvider>
         </ThemeProvider>
       </body>
     </html>

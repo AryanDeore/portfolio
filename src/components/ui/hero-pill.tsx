@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { Pill, PillStatus } from "@/components/ui/pill"
 
 interface HeroPillProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode
@@ -8,6 +9,11 @@ interface HeroPillProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default true
    */
   animate?: boolean
+  isPressed?: boolean
+  /**
+   * Whether to show subtle glow and pulse animation
+   */
+  isHighlighted?: boolean
 }
 
 export function HeroPill({ 
@@ -15,6 +21,8 @@ export function HeroPill({
   text, 
   className,
   animate = true,
+  isPressed = false,
+  isHighlighted = false,
   ...props 
 }: HeroPillProps) {
   return (
@@ -26,14 +34,28 @@ export function HeroPill({
       )} 
       {...props}
     >
-      <p className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-background px-3 py-1 text-sm font-medium text-foreground/90 dark:text-foreground/80 shadow-sm shadow-black/[.12] dark:bg-accent hover:bg-accent/80 transition-colors">
+      <Pill
+        variant="outline"
+        className={cn(
+          "inline-flex items-center justify-center px-3 py-1.5 whitespace-normal break-words transition-all duration-200",
+          "text-foreground/90 dark:text-foreground/90",
+          // Glassmorphism - use important to override Badge defaults
+          "!bg-gray-200/60 dark:!bg-[rgba(255,255,255,0.12)]",
+          "!border !border-gray-200/60 dark:!border-transparent",
+          "backdrop-blur-[10px]",
+          isPressed 
+            ? "scale-[0.96] !bg-gray-200/70 dark:!bg-[rgba(255,255,255,0.12)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]"
+            : "hover:!border-gray-300/80 dark:hover:!border-white/40",
+          isHighlighted && "pill-glow-pulse !border-white/50 dark:!border-white/50"
+        )}
+      >
         {icon && (
-          <span className="mr-2 flex shrink-0 border-r border-border pr-2">
+          <PillStatus className="shrink-0 border-border">
             {icon}
-          </span>
+          </PillStatus>
         )}
         {text}
-      </p>
+      </Pill>
     </div>
   )
 }

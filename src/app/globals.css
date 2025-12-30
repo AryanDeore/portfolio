@@ -285,6 +285,53 @@
   .glass-card-hover {
     @apply transition-all hover:border-primary/30 hover:shadow-[0_0_0_1px_hsl(var(--primary)/0.25),0_14px_40px_-12px_hsl(var(--primary)/0.15)];
   }
+
+  /* Chat input improvements */
+  .chat-input {
+    caret-color: hsl(var(--primary));
+  }
+
+  .chat-input:hover {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  }
+
+  .chat-input:focus {
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+  }
+
+  .dark .chat-input:hover {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .chat-input:focus {
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+  }
+
+  .chat-input-attention-nudge {
+    animation: chat-input-breathe 4500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chat-input-attention-nudge {
+      animation: none;
+    }
+  }
+
+  /* Subtle glow and pulse for highlighted pill */
+  .pill-glow-pulse {
+    animation: pill-glow-pulse 3s ease-in-out infinite;
+  }
+
+  .dark .pill-glow-pulse {
+    animation: pill-glow-pulse-dark 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill-glow-pulse,
+    .dark .pill-glow-pulse {
+      animation: none;
+    }
+  }
 }
 
 @keyframes fadeIn {
@@ -315,6 +362,180 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes pill-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.15), 0 0 16px 4px rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+@keyframes pill-glow-pulse-dark {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.2), 0 0 16px 4px rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes chat-input-breathe {
+  /* Pulse 1 - Very slow rise and fall */
+  0% {
+    transform: scale(1);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 0 0 0px rgba(255, 255, 255, 0);
+  }
+  3% {
+    transform: scale(1.001);
+    border-color: hsl(var(--primary) / 0.47);
+    box-shadow: 0 0 0 0.3px rgba(255, 255, 255, 0.02);
+  }
+  6% {
+    transform: scale(1.003);
+    border-color: hsl(var(--primary) / 0.52);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  9% {
+    transform: scale(1.006);
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  }
+  12% {
+    transform: scale(1.009);
+    border-color: hsl(var(--primary) / 0.68);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  }
+  15% {
+    transform: scale(1.01);
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+  }
+  18% {
+    transform: scale(1.009);
+    border-color: hsl(var(--primary) / 0.68);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  }
+  21% {
+    transform: scale(1.006);
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  }
+  24% {
+    transform: scale(1.003);
+    border-color: hsl(var(--primary) / 0.52);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  27% {
+    transform: scale(1);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 0 0 0px rgba(255, 255, 255, 0);
+  }
+  /* Pulse 2 - Very slow rise and fall */
+  33% {
+    transform: scale(1.001);
+    border-color: hsl(var(--primary) / 0.47);
+    box-shadow: 0 0 0 0.3px rgba(255, 255, 255, 0.02);
+  }
+  36% {
+    transform: scale(1.003);
+    border-color: hsl(var(--primary) / 0.52);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  39% {
+    transform: scale(1.006);
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  }
+  42% {
+    transform: scale(1.009);
+    border-color: hsl(var(--primary) / 0.68);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  }
+  45% {
+    transform: scale(1.01);
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+  }
+  48% {
+    transform: scale(1.009);
+    border-color: hsl(var(--primary) / 0.68);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  }
+  51% {
+    transform: scale(1.006);
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  }
+  54% {
+    transform: scale(1.003);
+    border-color: hsl(var(--primary) / 0.52);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  57% {
+    transform: scale(1);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 0 0 0px rgba(255, 255, 255, 0);
+  }
+  /* Pulse 3 - Very slow rise and fall */
+  63% {
+    transform: scale(1.001);
+    border-color: hsl(var(--primary) / 0.47);
+    box-shadow: 0 0 0 0.3px rgba(255, 255, 255, 0.02);
+  }
+  66% {
+    transform: scale(1.003);
+    border-color: hsl(var(--primary) / 0.52);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  69% {
+    transform: scale(1.006);
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  }
+  72% {
+    transform: scale(1.009);
+    border-color: hsl(var(--primary) / 0.68);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  }
+  75% {
+    transform: scale(1.01);
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+  }
+  78% {
+    transform: scale(1.009);
+    border-color: hsl(var(--primary) / 0.68);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  }
+  81% {
+    transform: scale(1.006);
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  }
+  84% {
+    transform: scale(1.003);
+    border-color: hsl(var(--primary) / 0.52);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+  87% {
+    transform: scale(1);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 0 0 0px rgba(255, 255, 255, 0);
+  }
+  /* Fade out */
+  100% {
+    transform: scale(1);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 0 0 0px rgba(255, 255, 255, 0);
   }
 }
 
