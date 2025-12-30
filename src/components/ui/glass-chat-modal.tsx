@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X, Send, RotateCcw, Copy, Check } from "lucide-react";
+import { X, Send, Trash2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import ReactMarkdown from "react-markdown";
@@ -144,7 +144,7 @@ export function GlassChatModal({ isOpen, onClose, messages, onSendMessage, onCle
                     onClick={onClearChat}
                     className="h-8 w-8 rounded-full hover:bg-background/50"
                   >
-                    <RotateCcw className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Clear chat history</span>
                   </Button>
                 </Tooltip.Trigger>

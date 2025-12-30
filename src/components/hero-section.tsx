@@ -93,18 +93,13 @@ export function HeroSection() {
           {/* Greeting */}
           <div className="space-y-4">
             <h1 className="text-5xl md:text-7xl lg:text-5xl font-bold tracking-tight">
-              Hi, I&apos;m Aryan
+              I&apos;m Aryan — AI Engineer
             </h1>
             
-            {/* Title */}
-            <h2 className="text-2xl md:text-3xl lg:text-2xl text-muted-foreground font-medium">
-              AI Engineer
-            </h2>
-            
-            {/* Tagline
+            {/* Tagline */}
             <p className="text-lg md:text-xl text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed">
-              Building LLM-powered tools with LangChain, PyTorch, and fine-tuned LLMs.
-            </p> */}
+              Interview my resume. Ask about my projects, skills, and real-world experience.
+            </p>
           </div>
 
           {/* Chat Input */}
